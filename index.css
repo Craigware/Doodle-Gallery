@@ -1,0 +1,28 @@
+body {
+    margin: 1rem 2rem;
+}
+
+.search-box {
+    height: 4rem;
+    width: auto;
+    background-color: black;
+}
+
+.gallery-item {
+    width: 100%;
+}
+
+.gallery-item-container {
+    width: 25rem;
+    object-fit: contain;
+    overflow: hidden;
+    display: inline-block;
+    flex-grow: 1;
+}
+
+.gallery {
+    margin: 2rem 0;
+    display: inline-flex;
+    height: 100%;
+    flex-wrap: wrap;
+}
