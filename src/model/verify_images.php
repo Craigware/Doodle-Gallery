@@ -1,14 +1,15 @@
 <?php 
+require __DIR__ . "/query_base.php";
 
 class Image {
     public string $title;
     public string $filename;
-    public DateTime $created_on;
+    public $created_on;
 
-    public array $tags;
-    public array $mediums;
+    public string $tags;
+    public string $mediums;
 
-    function __construct(string $title, string $filename, DateTime $created_on, array $tags, array $mediums) {
+    function __construct(string $filename, string $title, string $tags, string $mediums, $created_on) {
         $this->title = $title;
         $this->filename = $filename;
         $this->created_on = $created_on;
@@ -18,33 +19,39 @@ class Image {
     }
 }
 
+class ImageQueries extends Queries {
+    public $table = 'images';
 
+    function GetAllImages(){
+        $this->ConnectDB();
+        
+        $query = "SELECT * FROM $this->table";
+        $result = mysqli_query($this->db_con, $query);
 
-$db_con = mysqli_connect("localhost", "Craig", getenv("MYSQL_PASS"), "GalleryDB");
+        if ($result){
+            $all = $result->fetch_all();
+        } else {
+            throw new Exception(mysqli_error($this->db_con));
+        }
 
-try {    
-    $query = "SELECT * FROM images";
-    $result = mysqli_query($db_con, $query);
+        $images = [];
+        for ($i = 0; $i < count($all); $i++) {
+            $image = new Image($all[$i][1], $all[$i][2], $all[$i][3], $all[$i][4], $all[$i][5]);
+            array_push($images, $image);
+        }
 
-    if ($result) {
-        $all = $result->fetch_all();
+        $this->DisconnectDB();
+        return $images;
     }
-} catch (mysqli_sql_exception $e) {
-    if (!$result) {
-        // Creates table if it doesn't exist in database.
-        $cr_table_query = "
-            CREATE TABLE images (
-                id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                filename VARCHAR(30) NOT NULL,
-                title VARCHAR(30) NOT NULL,
-                tags TINYTEXT NOT NULL,
-                mediums TINYTEXT NOT NULL, 
-                created DATE
-            )
-        ";
 
-        $cr_table_result = mysqli_query($db_con, $cr_table_query);
+    function GetOneImage($id){
+        $this->db_con = $this->ConnectDB();
+        $query = "SELECT * FROM $this->table WHERE id = $id";
+        $result = mysqli_query($this->db_con, $query);
+        $image = $result->fetch_array();
+
+        return new Image($image[1], $image[2], $image[3], $image[4], $image[5]);
     }
 }
 
-$db_con->close();
+return new ImageQueries();

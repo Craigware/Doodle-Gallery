@@ -8,24 +8,24 @@
     <title>Doodle Gallery</title>
 </head>
 <body>
-    <hr />
+    <?php
+        $request_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $routes = [
+            "/" => "./src/view/gallery.php",
+            "/contact/" => "./src/view/contact.php",
+            "/admin_login/" => "./src/view/login.php"
+        ];
 
-    <form id="search-form" >
-        <input class="medium-text" type="text" name="search-text" placeholder="Search; 'Doodle', 'Painting', etc..."/>
-        <select name="medium">
-            <option value="0">Medium</option>
-        </select>
-        <select name="year">
-            <option value="0">Year</option>
-        </select>
-        <select name="type">
-            <option value="0">Type</option>
-        </select>
-        <button style="float:right;">Search</button>
-    </form>
-    
-    <hr />
-
-    <?php include("./src/view/gallery.php"); ?>
+        if (array_key_exists($request_path, $routes)) {
+            include $routes[$request_path];
+        } else {
+            http_response_code(404);
+            echo "404 not found";
+        }
+    ?>
 </body>
+<footer>
+    <a >Contact Me</a>
+    <a>Admin Login</a>
+</footer>
 </html>
