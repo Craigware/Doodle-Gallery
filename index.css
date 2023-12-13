@@ -13,9 +13,8 @@ body {
 .gallery-item {
     width: 100%;
 }
-
-/* 
-.gallery-item-container:hover {
+ 
+/* .gallery-item-container:hover {
     flex-grow: calc(var(--flex-grow-amount) + 10);
 } */
 
@@ -33,7 +32,6 @@ body {
 }
 
 .gallery {
-    margin: 2rem 0;
     display: inline-flex;
     height: 100%;
     flex-wrap: wrap;

@@ -1,6 +1,6 @@
 
 <?php
-
+include($_SERVER["DOCUMENT_ROOT"] . "/src/model/verify_images.php");
 function Gallery(){
     $folder = $_SERVER["DOCUMENT_ROOT"] . "/public/img/";
     $images = scandir($folder);
