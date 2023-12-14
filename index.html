@@ -48,6 +48,51 @@
             })
         </script>
     </div>
+
+    <script>
+        const data = {};
+        async function test(event){
+            event.preventDefault();
+            console.log(data);
+            const response = await fetch("http://www.localhost:4000/api/images/Upload/", {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                credentials: "same-origin",
+                body: JSON.stringify(data),
+            });
+        }
+
+        async function handleFormData(e) {
+            if (e.target.name == "filename") {
+                data[e.target.name] = e.target.files[0].name;
+
+                let file = e.target.files[0]
+                const reader = new FileReader();
+
+                reader.addEventListener("load", () => {
+                    data["image_base64"] = reader.result;
+                });
+
+                await reader.readAsDataURL(file);
+            } else {
+                data[e.target.name] = e.target.value;
+            }
+
+            console.log(data);
+        }
+    </script>
+    
+    <form id="UploadDoodleForm" onsubmit="test(event)">
+        <input type="text" onchange="handleFormData(event)" placeholder="Title" name="title" />
+        <input type="file" onchange="handleFormData(event)" accept=".png, .jpg" placeholder="Image" name="filename"/>
+        <input type="text" onchange="handleFormData(event)" placeholder="Tags" name="tags"/>
+        <input type="text" onchange="handleFormData(event)" placeholder="Mediums" name="mediums"/>
+        <button>Upload</button>
+    </form>
 </body>
 <footer>
     <a>Admin Login</a>

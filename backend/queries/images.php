@@ -36,11 +36,33 @@ class ImageQueries extends Queries {
         return new Image($image[1], $image[2], $image[3], $image[4], $image[5]);
     }
 
+    function PostImage(object $image){
+        $this->ConnectDB();
+        if (!$image->created) { $image->created = null; }
+        $query = "
+            INSERT INTO $this->table (filename, title, tags, mediums,)
+            VALUES (
+                $image->filename,
+                $image->title,
+                $image->tags,
+                $image->mediums,
+                $image->created
+            )
+        ";
+
+        $result = mysqli_query($this->db_con, $query);
+        $this->DisconnectDB();
+
+        return ($result) ? true : false;
+    }
+
+
     function DeleteImage($id){
-        $this->db_con = $this->ConnectDB();
+        $this->ConnectDB();
         $query = "DELETE FROM $this->table WHERE id = $id";
         $result = mysqli_query($this->db_con, $query);
 
+        $this->DisconnectDB();
         return ($result) ? True : False;
     }
 }
