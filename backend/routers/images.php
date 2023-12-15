@@ -7,33 +7,45 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     switch ($request_path) {
         case (str_contains($request_path, "/GetAllImages/")):
             $images = $image_query->GetAllImages();
+
+            $images = $image_query->OrderImageList($images);
+
             $encoded_images = [];
             foreach ($images as $image) {
                 array_push($encoded_images, $image->ToObject());
             }
-            $encoded_images = array_reverse($encoded_images);
             echo json_encode($encoded_images);
             return json_encode($encoded_images);
 
 
         case (str_contains($request_path, "/GetSomeImages")):
-            $data = explode("&", $_SERVER["QUERY_STRING"]);
-            $searchQueries = [];
+            $searchQuery = explode("?", $_SERVER['REQUEST_URI']);
+            $data = explode("&", $searchQuery[1]);
 
+            $searchQueries = [];
             foreach ($data as $individualSQ){
-                $individualSQ= explode("=", $individualSQ);
+                $individualSQ = explode("=", $individualSQ);
                 $searchQueries[$individualSQ[0]] = "%" . $individualSQ[1] . "%";
             }
 
-
+            if ($searchQueries["mediums"] == "%%" && $searchQueries["search"] != "%%") {
+                $searchQueries["mediums"] = $searchQueries["search"];
+            }
+            if ($searchQueries["tags"] == "%%" && $searchQueries["search"] != "%%") {
+                $searchQueries["tags"] = $searchQueries["search"];
+            }
+            
+            
             $images = $image_query->SearchAllImages($searchQueries);
+            $images = $image_query->OrderImageList($images);
+
             $encoded_images = [];
             foreach ($images as $image) {
                 array_push($encoded_images, $image->ToObject());
             }
-            $encoded_images = array_reverse($encoded_images);
-            echo json_encode($encoded_images);
-            return json_encode($encoded_images);
+
+            echo json_encode($images);
+            return json_encode($images);
 
         
         case (str_contains($request_path, "/GetImage/")):
