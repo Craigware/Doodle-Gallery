@@ -14,6 +14,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $encoded_images = array_reverse($encoded_images);
             echo json_encode($encoded_images);
             return json_encode($encoded_images);
+
+
+        case (str_contains($request_path, "/GetSomeImages")):
+            $data = explode("&", $_SERVER["QUERY_STRING"]);
+            $searchQueries = [];
+
+            foreach ($data as $individualSQ){
+                $individualSQ= explode("=", $individualSQ);
+                $searchQueries[$individualSQ[0]] = "%" . $individualSQ[1] . "%";
+            }
+
+
+            $images = $image_query->SearchAllImages($searchQueries);
+            $encoded_images = [];
+            foreach ($images as $image) {
+                array_push($encoded_images, $image->ToObject());
+            }
+            $encoded_images = array_reverse($encoded_images);
+            echo json_encode($encoded_images);
+            return json_encode($encoded_images);
+
         
         case (str_contains($request_path, "/GetImage/")):
             break;

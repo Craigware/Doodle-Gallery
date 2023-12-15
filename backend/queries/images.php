@@ -27,6 +27,33 @@ class ImageQueries extends Queries {
         return $images;
     }
 
+    function SearchAllImages($searchQueries){
+        $this->db_con = $this->ConnectDB();
+        $query = "SELECT * FROM $this->table 
+        WHERE title LIKE ? OR mediums LIKE ? OR tags LIKE ?";
+
+        $stmt = mysqli_prepare($this->db_con, $query);
+
+        $searchParam = $searchQueries["search"];
+        mysqli_stmt_bind_param($stmt, "sss", $searchParam, $searchParam, $searchParam);
+
+
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        $all = mysqli_fetch_all($result);
+        $images = [];
+        for ($i = 0; $i < count($all); $i++) {
+            $image = new Image($all[$i][1], $all[$i][2], $all[$i][3], $all[$i][4], $all[$i][5]);
+            array_push($images, $image);
+        }
+
+        mysqli_stmt_close($stmt);
+        $this->DisconnectDB();
+
+        return $images;
+    }
+
     function GetOneImage($id){
         $this->db_con = $this->ConnectDB();
         $query = "SELECT * FROM $this->table WHERE id = $id";
@@ -38,22 +65,19 @@ class ImageQueries extends Queries {
 
     function PostImage(Image $image){
         $this->ConnectDB();
-        $created = date_format($image->created_on,"Y-m-d H:i:s");
-        $query = "
-        INSERT INTO $this->table (filename, title, tags, mediums, created)
-        VALUES (
-            '$image->filename',
-            '$image->title',
-            '$image->tags',
-            '$image->mediums',
-            '$created'
-        );
-        ";
+        $created = date_format($image->created_on,"Y-m-d");
+        $query = "INSERT INTO $this->table (filename, title, tags, mediums, created)
+        VALUES (?, ?, ?, ?, ?)";
 
-        $result = mysqli_query($this->db_con, $query);
+        $stmt = mysqli_prepare($this->db_con, $query);
+        mysqli_stmt_bind_param($stmt, "sssss", $image->filename, $image->title, $image->tags, $image->mediums, $created);
+
+        $result = mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+
         $this->DisconnectDB();
 
-        return ($result) ? true : false;
+        return $result ? true : false;
     }
 
 

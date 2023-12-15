@@ -5,15 +5,15 @@
     <link rel="stylesheet" href="./index.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="./index.js"> </script>
 </head>
 <body>
     <main>
         <h1>Welcome to Craig's doodle gallery!</h1>
         <hr />
-        <script>
-        </script>
-        <form id='search-form' >
-            <input class='medium-text' type='text' name='search-text' placeholder='Search; Doodle, Painting, etc...'/>
+
+        <form id='SearchForm'>
+            <input id="SearchTextInput" class='medium-text' type='text' name='search-text' placeholder='Search; Doodle, Painting, etc...'/>
             <select name='medium'>
                 <option value='0'>Medium</option>
             </select>
@@ -25,52 +25,23 @@
             </select>
             <button style='float:right;'>Search</button>
         </form>
+        <script>
+        </script>
+
+        <hr />
+        <form>
+            Sort by
+            <input type="checkbox">Creation Date
+            <input type="checkbox">Medium Type
+            <input type="checkbox">Image Type
+        </form>
+
         <hr />
 
-        <div id="Gallery" class="gallery">
-            <script>
-                async function fetchImages(){
-                    let images = await fetch("http://www.localhost:4000/api/images/GetAllImages/");
-                    let data = images.json();
-                    return data;
-                }
-
-                fetchImages().then((images) => {
-                    function createGalleryRow(rowLength){
-                        let row = document.createElement("div");
-                        row.classList.add("gallery-row");
-                        row.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
-                        return row
-                    }
-                    let gallery = document.getElementById("Gallery");
-
-                    let rowLength = 3;
-                    let r = 0;
-                    let row = createGalleryRow(rowLength);
-                    for (let i = 0; i < images.length; i++){
-                        if (r >= rowLength) {
-                            if (rowLength > images.length - i) { rowLength = images.length - i; }
-                            row = createGalleryRow(rowLength);
-                            r = 0;
-                        }
-
-                        let galleryItem = document.createElement("img");
-
-                        galleryItem.src = "./backend/images/" + images[i]["filename"];
-                        galleryItem.classList.add("gallery-item");
-                        
-                        if (galleryItem.naturalHeight <= galleryItem.naturalWidth ){
-                            galleryItem.style.height = "100%";
-                            galleryItem.style.gridColumn = ``;
-                            r += 2;
-                        } else { r += 1; }
-                        console.log(r);
-                        row.appendChild(galleryItem);
-                        gallery.appendChild(row);
-                    }
-                })
-            </script>
+        <div id="Gallery" class="gallery" style="height: 1080px">
         </div>
+
+        <hr />
 
         <script>
             const data = {};

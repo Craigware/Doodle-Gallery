@@ -34,10 +34,22 @@ h1 {
 .gallery-item {
     width: 100%;
     object-fit: cover;
+    animation: fadeIn 1s;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 100%;
+    }
 }
 
 .gallery-row {
     display: grid;
+    text-align: center;
     gap: 1rem;
     margin: 1rem 0;
 }
