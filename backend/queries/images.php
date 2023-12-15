@@ -36,18 +36,18 @@ class ImageQueries extends Queries {
         return new Image($image[1], $image[2], $image[3], $image[4], $image[5]);
     }
 
-    function PostImage(object $image){
+    function PostImage(Image $image){
         $this->ConnectDB();
-        if (!$image->created) { $image->created = null; }
+        $created = date_format($image->created_on,"Y-m-d H:i:s");
         $query = "
-            INSERT INTO $this->table (filename, title, tags, mediums,)
-            VALUES (
-                $image->filename,
-                $image->title,
-                $image->tags,
-                $image->mediums,
-                $image->created
-            )
+        INSERT INTO $this->table (filename, title, tags, mediums, created)
+        VALUES (
+            '$image->filename',
+            '$image->title',
+            '$image->tags',
+            '$image->mediums',
+            '$created'
+        );
         ";
 
         $result = mysqli_query($this->db_con, $query);

@@ -2,15 +2,15 @@
 class Image {
     public string $title;
     public string $filename;
-    public $created_on;
+    public DateTime $created_on;
 
     public string $tags;
     public string $mediums;
 
-    function __construct(string $filename, string $title, string $tags, string $mediums, $created_on) {
+    function __construct(string $filename, string $title, string $tags, string $mediums, $created_on=null) {
         $this->title = $title;
         $this->filename = $filename;
-        $this->created_on = $created_on;
+        $this->created_on = date_create($created_on);
 
         $this->tags = $tags;
         $this->mediums = $mediums;
@@ -34,7 +34,7 @@ class Image {
             "filename" => $this->filename,
             "tags"=> $this->tags,
             "mediums"=> $this->mediums,
-            "created"=> $this->created_on
+            "created"=> date_format($this->created_on,"Y-m-d H:i:s")
         ];
 
         return $image_object;

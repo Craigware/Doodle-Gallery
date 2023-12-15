@@ -1,5 +1,9 @@
 
-body {
+* {
+    margin: 0;
+}
+
+main {
     margin: 1rem 4rem;
 }
 
@@ -11,6 +15,16 @@ footer {
     }
 }
 
+hr {
+    margin: .5rem 0;
+}
+
+h1 {
+    text-align: center;
+    background-color: lightblue;
+    padding: 2rem;
+}
+
 .search-box {
     height: 4rem;
     width: auto;
@@ -19,30 +33,13 @@ footer {
 
 .gallery-item {
     width: 100%;
-}
- 
-/* .gallery-item-container:hover {
-    flex-grow: calc(var(--flex-grow-amount) + 10);
-} */
-
-.gallery-item-container {
-    --flex-grow-amount: 1;
-    width: 25rem;
-    height: 30rem;
-    object-fit: contain;
-    overflow: hidden;
-    display: inline-block;
-    flex-grow: var(--flex-grow-amount);
-    flex-shrink: .01;
-
-    transition: flex-grow 2s;
+    object-fit: cover;
 }
 
-.gallery {
-    display: inline-flex;
-    height: 100%;
-    flex-wrap: wrap;
+.gallery-row {
+    display: grid;
     gap: 1rem;
+    margin: 1rem 0;
 }
 
 input, button, select{

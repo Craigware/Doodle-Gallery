@@ -7,92 +7,117 @@
     <title>Document</title>
 </head>
 <body>
-    <hr />
-    <form id='search-form' >
-        <input class='medium-text' type='text' name='search-text' placeholder='Search; Doodle, Painting, etc...'/>
-        <select name='medium'>
-            <option value='0'>Medium</option>
-        </select>
-        <select name='year'>
-            <option value='0'>Year</option>
-        </select>
-        <select name='type'>
-            <option value='0'>Type</option>
-        </select>
-        <button style='float:right;'>Search</button>
-    </form>
-    <hr />
-
-    <div id="Gallery" class="gallery">
+    <main>
+        <h1>Welcome to Craig's doodle gallery!</h1>
+        <hr />
         <script>
-            async function fetchImages(){
-                let images = await fetch("http://www.localhost:4000/api/images/GetAllImages/");
-                let data = images.json();
-                return data;
-            }
-
-            fetchImages().then((images) => {
-                let gallery = document.getElementById("Gallery");
-                for (let i = 0; i < images.length; i++){
-                    let galleryItemContainer = document.createElement("div");
-                    let galleryItem = document.createElement("img");
-
-                    galleryItem.src = "./frontend/img/" + images[i]["filename"];
-                    galleryItem.classList.add("gallery-item");
-
-                    galleryItemContainer.classList.add("gallery-item-container");
-
-                    galleryItemContainer.appendChild(galleryItem);
-                    gallery.appendChild(galleryItemContainer);
-                }
-            })
         </script>
-    </div>
+        <form id='search-form' >
+            <input class='medium-text' type='text' name='search-text' placeholder='Search; Doodle, Painting, etc...'/>
+            <select name='medium'>
+                <option value='0'>Medium</option>
+            </select>
+            <select name='year'>
+                <option value='0'>Year</option>
+            </select>
+            <select name='type'>
+                <option value='0'>Type</option>
+            </select>
+            <button style='float:right;'>Search</button>
+        </form>
+        <hr />
 
-    <script>
-        const data = {};
-        async function test(event){
-            event.preventDefault();
-            console.log(data);
-            const response = await fetch("http://www.localhost:4000/api/images/Upload/", {
-                method: "POST",
-                mode: "cors",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                redirect: "follow",
-                credentials: "same-origin",
-                body: JSON.stringify(data),
-            });
-        }
+        <div id="Gallery" class="gallery">
+            <script>
+                async function fetchImages(){
+                    let images = await fetch("http://www.localhost:4000/api/images/GetAllImages/");
+                    let data = images.json();
+                    return data;
+                }
 
-        async function handleFormData(e) {
-            if (e.target.name == "filename") {
-                data[e.target.name] = e.target.files[0].name;
+                fetchImages().then((images) => {
+                    function createGalleryRow(rowLength){
+                        let row = document.createElement("div");
+                        row.classList.add("gallery-row");
+                        row.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
+                        return row
+                    }
+                    let gallery = document.getElementById("Gallery");
 
-                let file = e.target.files[0]
-                const reader = new FileReader();
+                    let rowLength = 3;
+                    let r = 0;
+                    let row = createGalleryRow(rowLength);
+                    for (let i = 0; i < images.length; i++){
+                        if (r >= rowLength) {
+                            if (rowLength > images.length - i) { rowLength = images.length - i; }
+                            row = createGalleryRow(rowLength);
+                            r = 0;
+                        }
 
-                reader.addEventListener("load", () => {
-                    data["image_base64"] = reader.result;
+                        let galleryItem = document.createElement("img");
+
+                        galleryItem.src = "./backend/images/" + images[i]["filename"];
+                        galleryItem.classList.add("gallery-item");
+                        
+                        if (galleryItem.naturalHeight <= galleryItem.naturalWidth ){
+                            galleryItem.style.height = "100%";
+                            galleryItem.style.gridColumn = ``;
+                            r += 2;
+                        } else { r += 1; }
+                        console.log(r);
+                        row.appendChild(galleryItem);
+                        gallery.appendChild(row);
+                    }
+                })
+            </script>
+        </div>
+
+        <script>
+            const data = {};
+            async function test(event){
+                event.preventDefault();
+                console.log(data);
+                const response = await fetch("http://www.localhost:4000/api/images/Upload/", {
+                    method: "POST",
+                    mode: "cors",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    redirect: "follow",
+                    credentials: "same-origin",
+                    body: JSON.stringify(data),
                 });
-
-                await reader.readAsDataURL(file);
-            } else {
-                data[e.target.name] = e.target.value;
             }
 
-            console.log(data);
-        }
-    </script>
-    
-    <form id="UploadDoodleForm" onsubmit="test(event)">
-        <input type="text" onchange="handleFormData(event)" placeholder="Title" name="title" />
-        <input type="file" onchange="handleFormData(event)" accept=".png, .jpg" placeholder="Image" name="filename"/>
-        <input type="text" onchange="handleFormData(event)" placeholder="Tags" name="tags"/>
-        <input type="text" onchange="handleFormData(event)" placeholder="Mediums" name="mediums"/>
-        <button>Upload</button>
-    </form>
+            async function handleFormData(e) {
+                if (e.target.name == "filename") {
+                    data[e.target.name] = e.target.files[0].name;
+
+                    let file = e.target.files[0]
+                    const reader = new FileReader();
+
+                    reader.addEventListener("load", () => {
+                        data["image_base64"] = reader.result;
+                    });
+
+                    await reader.readAsDataURL(file);
+                } else {
+                    data[e.target.name] = e.target.value;
+                }
+
+                console.log(data);
+            }
+        </script>
+        
+        <form id="UploadDoodleForm" onsubmit="test(event)">
+            <input type="text" onchange="handleFormData(event)" placeholder="Title" name="title" />
+            <input type="file" onchange="handleFormData(event)" accept=".png, .jpg" placeholder="Image" name="filename"/>
+            <input type="text" onchange="handleFormData(event)" placeholder="Tags" name="tags"/>
+            <input type="text" onchange="handleFormData(event)" placeholder="Mediums" name="mediums"/>
+            <input type="date" onchange="handleFormData(event)" name="created"/>
+            <button>Upload</button>
+        </form>
+    </main>
 </body>
 <footer>
     <a>Admin Login</a>
