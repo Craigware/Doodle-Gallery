@@ -1,11 +1,11 @@
 <?php
 class Queries {
     public $db_con;
-    public $db = "GalleryDB";
+    public $db = "gallerydb";
     public $table;
 
     function ConnectDB() {
-        return $this->db_con = mysqli_connect("localhost", "Craig", getenv("MYSQL_PASS"), $this->db);
+        return $this->db_con = mysqli_connect("localhost", "craig", getenv("SQL_PASS"), $this->db);
     }
 
     function DisconnectDB() {
