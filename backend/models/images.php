@@ -7,13 +7,20 @@ class Image {
     public string $tags;
     public string $mediums;
 
+    public array $imageSize;
+
     function __construct(string $filename, string $title, string $tags, string $mediums, $created_on=null) {
         $this->title = $title;
         $this->filename = $filename;
-        $this->created_on = date_create($created_on);
 
         $this->tags = $tags;
         $this->mediums = $mediums;
+
+        $this->created_on = date_create($created_on);
+
+        
+        $sizes = getimagesize($_SERVER["DOCUMENT_ROOT"] . "/images/" . $this->filename);
+        $this->imageSize = [ "x" => $sizes[0], "y" => $sizes[1] ];
     }
 
     static function Decode($object){
@@ -34,7 +41,8 @@ class Image {
             "filename" => $this->filename,
             "tags"=> $this->tags,
             "mediums"=> $this->mediums,
-            "created"=> date_format($this->created_on,"Y-m-d H:i:s")
+            "created"=> date_format($this->created_on,"Y-m-d H:i:s"),
+            "imageSize" => $this->imageSize
         ];
 
         return $image_object;

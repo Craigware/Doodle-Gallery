@@ -41,6 +41,7 @@ class ImageQueries extends Queries {
 
         // Checks if value has something
         // for mediums and tags checks if they are same as search if they are can be either one
+        // UNSAFE NEEDS UPDATE
         foreach ($searchQueries as $key => $value) {
             switch ($key){
                 case "search":
@@ -90,6 +91,7 @@ class ImageQueries extends Queries {
     function PostImage(Image $image){
         $this->ConnectDB();
         $created = date_format($image->created_on,"Y-m-d");
+        //SECURE USE AS EXAMPLE
         $query = "INSERT INTO $this->table (filename, title, tags, mediums, created)
         VALUES (?, ?, ?, ?, ?)";
 

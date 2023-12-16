@@ -12,16 +12,19 @@
         <h1>Welcome to Craig's doodle gallery!</h1>
         <hr />
 
-        <form id='SearchForm'>
-            <input id="SearchTextInput" class='medium-text' type='text' name='search-text' placeholder='Search; Doodle, Painting, etc...'/>
-            <select name='medium'>
-                <option value='0'>Medium</option>
+        <form id='SearchForm' onsubmit="">
+            <input id="SearchTextInput" class='medium-text' type='text' name='search' placeholder='Search; Doodle, Painting, etc...'/>
+            <select name='mediums'>
+                <option value="">Medium</option>
+                <option value="watercolor">Watercolor</option>
             </select>
-            <select name='year'>
-                <option value='0'>Year</option>
+            <select name='created'>
+                <option value=''>Year</option>
+                <option value="2023">2023</option>
             </select>
-            <select name='type'>
-                <option value='0'>Type</option>
+            <select name='tags'>
+                <option value=''>Type</option>
+                <option value='Sketch'>Sketch</option>
             </select>
             <button style='float:right;'>Search</button>
         </form>
@@ -29,13 +32,6 @@
         </script>
 
         <hr />
-        <form>
-            Sort by
-            <input type="checkbox">Creation Date
-            <input type="checkbox">Medium Type
-            <input type="checkbox">Image Type
-        </form>
-
         <hr />
 
         <div id="Gallery" class="gallery" style="height: 1080px">
@@ -61,7 +57,10 @@
             }
 
             async function handleFormData(e) {
+                const maxFileSize = 5 * 1048576;
                 if (e.target.name == "filename") {
+                    if (e.target.files[0].size > maxFileSize ) { alert("File upload too large."); e.target.value = ""; return null; }
+                    console.log(e.target.files[0].size);
                     data[e.target.name] = e.target.files[0].name;
 
                     let file = e.target.files[0]
@@ -91,6 +90,7 @@
     </main>
 </body>
 <footer>
+    
     <a>Admin Login</a>
     <a>Contact Me</a>
 </footer>
