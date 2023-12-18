@@ -38,7 +38,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             
             $images = $image_query->SearchAllImages($searchQueries);
             $images = $image_query->OrderImageList($images);
-
             $encoded_images = [];
             foreach ($images as $image) {
                 array_push($encoded_images, $image->ToObject());
@@ -62,6 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $image_file = fopen($image_data->filename, "w");
             fwrite( $image_file, base64_decode( $data[1] ) );
             fclose( $image_file ); 
+            // CHANGE TO GENERATE NEW FILE NAME RATHER THAN USING SUPPLIED
             rename($image_data->filename, 'images/'. $image_data->filename );
 
             $image = new Image($image_data->filename, $image_data->title, $image_data->tags, $image_data->mediums, $image_data->created);

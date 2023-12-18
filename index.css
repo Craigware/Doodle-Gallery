@@ -24,6 +24,32 @@ h1 {
     padding: 2rem;
 }
 
+.alert {
+    --alert-font-size: 18px;
+    background-color: rgb(243, 255, 137);
+    padding: 1rem .5rem;
+    
+    & p{
+        font-size: 18px;
+        margin: auto;
+        display: inline;
+    }
+}
+
+.alert::before{
+    content: "-";
+}
+
+.alert::after {
+    content: "";
+    width: calc(18px + 3px);
+    height: calc(18px + 3px);
+    background-color: black;
+    background-size: cover;
+    float: right;
+}
+
+
 .search-box {
     height: 4rem;
     width: auto;
