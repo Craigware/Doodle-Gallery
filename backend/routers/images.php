@@ -63,8 +63,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $fileType = explode("/", $fileType[0])[1];
 
             $saveLocal = getenv('Image_Repo');
-            $filename = strval(count(glob($saveLocal . "*.{jpg,png}",GLOB_BRACE)) + 1) . ".$fileType";
-            
+            $filename = strval(count(glob($saveLocal . "*.{jpeg,jpg,png}",GLOB_BRACE)) + 1) . ".$fileType";
+
             $image_file = fopen($filename, "w");
             fwrite( $image_file, base64_decode( $data[1] ) );
             fclose( $image_file ); 

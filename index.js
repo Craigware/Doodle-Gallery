@@ -1,3 +1,4 @@
+
 function createGallery(images){
     function createGalleryRow(rowLength){
         let row = document.createElement("div");
@@ -28,8 +29,9 @@ function createGallery(images){
 
         const galleryItem = document.createElement("img");
         const resolution =  images[i]["imageSize"];
+        const iSrc = "data:image/png;base64," + images[i]["image_base64"];
 
-        galleryItem.src = "./backend/images/" + images[i]["filename"];
+        galleryItem.src = iSrc;
         galleryItem.classList.add("gallery-item");
 
         galleryItem.onload = () => { this.loaded = true; }
@@ -61,14 +63,14 @@ async function searchFor(searchQuery){
         if (count == 4) { return fetchImages() }
     }
 
-    let url = "http://www.localhost:4000/api/images/GetSomeImages?";
+    let url = backend_url + "/api/images/GetSomeImages?";
     let images = await fetch(url + new URLSearchParams(searchQuery));
     let data = images.json();
     return data;
 }
 
 async function fetchImages(){
-    let images = await fetch("http://www.localhost:4000/api/images/GetAllImages/");
+    let images = await fetch(backend_url + "/api/images/GetAllImages/");
     let data = images.json();
     return data;
 }

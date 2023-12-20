@@ -19,7 +19,7 @@ class Image {
         $this->created = date_create($created);
 
         
-        $sizes = getimagesize($_SERVER["DOCUMENT_ROOT"] . "/images/" . $this->filename);
+        $sizes = getimagesize(getenv("Image_Repo") . $this->filename);
         $this->imageSize = [ "x" => $sizes[0], "y" => $sizes[1] ];
     }
 
@@ -36,9 +36,13 @@ class Image {
     }
 
     function ToObject(){
+        $image_base64 = file_get_contents(getenv("Image_Repo") . $this->filename);
+        $image_base64 = base64_encode($image_base64);
+
         $image_object = [
             "title" => $this->title,
             "filename" => $this->filename,
+            "image_base64" => $image_base64,
             "tags"=> $this->tags,
             "mediums"=> $this->mediums,
             "created"=> date_format($this->created,"Y-m-d H:i:s"),

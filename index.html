@@ -46,8 +46,7 @@
             const data = {};
             async function test(event){
                 event.preventDefault();
-                console.log(data);
-                const response = await fetch("http://www.localhost:4000/api/images/Upload/", {
+                const response = await fetch("http://www.192.168.0.238:4000/api/images/Upload/", {
                     method: "POST",
                     mode: "cors",
                     headers: {
@@ -60,10 +59,9 @@
             }
 
             async function handleFormData(e) {
-                const maxFileSize = 5 * 1048576;
+                const maxFileSize = 5 * 1048576; // mbAmount x 1mg amout in bits
                 if (e.target.name == "filename") {
                     if (e.target.files[0].size > maxFileSize ) { alert("File upload too large."); e.target.value = ""; return null; }
-                    console.log(e.target.files[0].size);
                     data[e.target.name] = e.target.files[0].name;
 
                     let file = e.target.files[0]
@@ -78,7 +76,6 @@
                     data[e.target.name] = e.target.value;
                 }
 
-                console.log(data);
             }
         </script>
         
