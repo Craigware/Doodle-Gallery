@@ -5,7 +5,7 @@ class Queries {
     public $table;
 
     function ConnectDB() {
-        return $this->db_con = mysqli_connect("localhost", "craig", getenv("SQL_PASS"), $this->db);
+        return $this->db_con = mysqli_connect("localhost", "Craig", getenv("SQL_PASS"), $this->db);
     }
 
     function DisconnectDB() {

@@ -20,7 +20,6 @@ function createGallery(images){
     let r = 0;
     let row = createGalleryRow(rowLength);
     for (let i = 0; i < images.length; i++){
-        console.log(images[i]);
         if (r >= rowLength) {
             if (rowLength > images.length - i) { rowLength = images.length - i; }
             row = createGalleryRow(rowLength);
@@ -43,8 +42,6 @@ function createGallery(images){
                 r += 1;
             }
         }
-
-
         r += 1;
         row.appendChild(galleryItem);
         gallery.appendChild(row);
@@ -77,44 +74,78 @@ async function fetchImages(){
 }
 
 function showModal(imagePath, image){
+    const main = document.getElementsByTagName("html")[0];
+
     const modal = document.createElement("div");
     const background = document.createElement("div");
     const img = document.createElement("img");
-    const main = document.getElementsByTagName("main")[0];
+    const imgContainer = document.createElement("div");
+    const title = document.createElement("h2");
 
-    const offsetX = image["imageSize"]["x"] / 2;
-    const offsetY = image["imageSize"]["y"] / 2;
+    const yOffset = window.scrollY;
+    window.onscroll = () => { window.scrollTo(0,yOffset);};
+
+
+    modal.onclick = () => {
+        main.removeChild(main.children[main.children.length - 1]);
+        window.onscroll = () => {};
+    };
     
     modal.style.cssText = `
+        cursor: pointer;
         position: absolute;
         height: 100vh;
         width: 100%;
         left: 0;
-        top: 0;
+        top: ${yOffset}px;
     `;
 
-    background.onclick = () => {main.removeChild(main.children[main.children.length - 1])};
     background.style.cssText = `
         position: absolute;
         background-color: black;
         height: 100%;
         width: 100%;
-        opacity: 50%;
+        opacity: 80%;
     `;
 
     img.src = imagePath;
-    img.style.cssText = `
+    imgContainer.style.cssText = `
         position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-${offsetX}px, -${offsetY}px);
         opacity: 100%;
+        width: 75%;
+        height: 75%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
     `;
 
+    img.style.cssText = `
+        object-fit: contain;
+        width: 100%;
+        height: 100%;
+    `
+
+
+    let createdOn = new Date(image["created"]);
+    title.innerHTML = "<span style='text-decoration:underline;'>" + image["title"] + "</span>; " + createdOn.toLocaleDateString();
+    console.log(image);
+    title.style.cssText = `
+        color: white;
+        width: 100%;
+        top: 2rem;
+        text-align: center;
+        position: absolute;
+        font-size: 48px;
+        z-index: 10;
+    `;
+
+
+    imgContainer.appendChild(img);
     
-    
+    modal.appendChild(imgContainer);
+    modal.appendChild(title);
     modal.appendChild(background);
-    modal.appendChild(img);
     main.appendChild(modal);
 }
 
@@ -131,12 +162,7 @@ const searchQuery = {
 let images = []
 
 
-
-
-
-
 window.addEventListener("load", () => {
-    const searchInput = document.getElementById("SearchTextInput")
     const searchForm = document.getElementById("SearchForm");
 
     fetchImages().then((_images) => {
@@ -147,11 +173,14 @@ window.addEventListener("load", () => {
     searchForm.addEventListener("change", (e) => {
         searchQuery[e.target.name] = e.target.value;
         searchFor(searchQuery).then((_images) => {
-            console.log(_images);
             images = _images;
             deleteGallery();
             createGallery(images);
          });
     });
-})
+
+    searchForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+    });
+});
 

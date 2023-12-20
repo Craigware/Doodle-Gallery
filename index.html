@@ -9,10 +9,12 @@
 </head>
 <body>
     <main>
-        <h1>Welcome to Craig's doodle gallery!</h1>
+        <div id="Hero" class="hero">
+            <h1>Welcome to Craig's Doodle Gallery!</h1>
+        </div>
         <hr />
 
-        <form id='SearchForm' onsubmit="">
+        <form id='SearchForm'>
             <input id="SearchTextInput" class='medium-text' type='text' name='search' placeholder='Search; Doodle, Painting, etc...'/>
             <select name='mediums'>
                 <option value="">Medium</option>
@@ -28,10 +30,8 @@
             </select>
             <button style='float:right;'>Search</button>
         </form>
-        <script>
-        </script>
-
         <hr />
+
         <div class="alert">
             <p>Please complete this doodle feedback form:</p>
         </div>
@@ -93,7 +93,6 @@
     </main>
 </body>
 <footer>
-    
     <a>Admin Login</a>
     <a>Contact Me</a>
 </footer>

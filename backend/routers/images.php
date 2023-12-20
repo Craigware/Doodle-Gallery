@@ -43,8 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 array_push($encoded_images, $image->ToObject());
             }
 
-            echo json_encode($images);
-            return json_encode($images);
+            echo json_encode($encoded_images);
+            return json_encode($encoded_images);
 
         
         case (str_contains($request_path, "/GetImage/")):
@@ -58,13 +58,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $image_data = json_decode(file_get_contents("php://input"));
             
             $data = explode( ',', $image_data->image_base64 );
-            $image_file = fopen($image_data->filename, "w");
+
+            $fileType = explode(";", $data[0]);
+            $fileType = explode("/", $fileType[0])[1];
+
+            $saveLocal = getenv('Image_Repo');
+            $filename = strval(count(glob($saveLocal . "*.{jpg,png}",GLOB_BRACE)) + 1) . ".$fileType";
+            
+            $image_file = fopen($filename, "w");
             fwrite( $image_file, base64_decode( $data[1] ) );
             fclose( $image_file ); 
-            // CHANGE TO GENERATE NEW FILE NAME RATHER THAN USING SUPPLIED
-            rename($image_data->filename, 'images/'. $image_data->filename );
+            rename($filename, $saveLocal . $filename);
 
-            $image = new Image($image_data->filename, $image_data->title, $image_data->tags, $image_data->mediums, $image_data->created);
+            $image = new Image($filename, $image_data->title, $image_data->tags, $image_data->mediums, $image_data->created);
             $res = $image_query->PostImage($image);
             echo $res;
             return $res;

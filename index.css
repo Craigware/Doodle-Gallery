@@ -1,5 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Roboto+Slab:wght@300;400;500;600;700&display=swap');
+
 * {
     margin: 0;
+    font-family: 'Roboto Slab', serif;
+
 }
 
 main {
@@ -20,8 +24,14 @@ hr {
 
 h1 {
     text-align: center;
-    background-color: lightblue;
     padding: 2rem;
+}
+
+#Hero h1::before {
+    content: "|| "
+}
+#Hero h1::after {
+    content: " ||"
 }
 
 .alert {
@@ -48,7 +58,6 @@ h1 {
     background-size: cover;
     float: right;
 }
-
 
 .search-box {
     height: 4rem;

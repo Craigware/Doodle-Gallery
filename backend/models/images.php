@@ -2,21 +2,21 @@
 class Image {
     public string $title;
     public string $filename;
-    public DateTime $created_on;
+    public DateTime $created;
 
     public string $tags;
     public string $mediums;
 
     public array $imageSize;
 
-    function __construct(string $filename, string $title, string $tags, string $mediums, $created_on=null) {
+    function __construct(string $filename, string $title, string $tags, string $mediums, $created=null) {
         $this->title = $title;
         $this->filename = $filename;
 
         $this->tags = $tags;
         $this->mediums = $mediums;
 
-        $this->created_on = date_create($created_on);
+        $this->created = date_create($created);
 
         
         $sizes = getimagesize($_SERVER["DOCUMENT_ROOT"] . "/images/" . $this->filename);
@@ -41,7 +41,7 @@ class Image {
             "filename" => $this->filename,
             "tags"=> $this->tags,
             "mediums"=> $this->mediums,
-            "created"=> date_format($this->created_on,"Y-m-d H:i:s"),
+            "created"=> date_format($this->created,"Y-m-d H:i:s"),
             "imageSize" => $this->imageSize
         ];
 

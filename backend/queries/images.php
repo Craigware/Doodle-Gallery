@@ -15,7 +15,7 @@ class ImageQueries extends Queries {
 
     function GetAllImages(){
         $this->ConnectDB();
-        
+        // unsafe, technically doesnt need to be safe because it isnt sensitive data but still
         $query = "SELECT * FROM $this->table";
         $result = mysqli_query($this->db_con, $query);
 
@@ -79,18 +79,9 @@ class ImageQueries extends Queries {
         return $images;
     }
 
-    function GetOneImage($id){
-        $this->db_con = $this->ConnectDB();
-        $query = "SELECT * FROM $this->table WHERE id = $id";
-        $result = mysqli_query($this->db_con, $query);
-        $image = $result->fetch_array();
-        
-        return new Image($image[1], $image[2], $image[3], $image[4], $image[5]);
-    }
-
     function PostImage(Image $image){
         $this->ConnectDB();
-        $created = date_format($image->created_on,"Y-m-d");
+        $created = date_format($image->created,"Y-m-d");
         //SECURE USE AS EXAMPLE
         $query = "INSERT INTO $this->table (filename, title, tags, mediums, created)
         VALUES (?, ?, ?, ?, ?)";
@@ -104,16 +95,6 @@ class ImageQueries extends Queries {
         $this->DisconnectDB();
 
         return $result ? true : false;
-    }
-
-
-    function DeleteImage($id){
-        $this->ConnectDB();
-        $query = "DELETE FROM $this->table WHERE id = $id";
-        $result = mysqli_query($this->db_con, $query);
-
-        $this->DisconnectDB();
-        return ($result) ? True : False;
     }
 }
 
