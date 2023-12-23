@@ -1,3 +1,4 @@
+const backend_url = "http://192.168.0.238:4000";
 
 function createGallery(images){
     function createGalleryRow(rowLength){
