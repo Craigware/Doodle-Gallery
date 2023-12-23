@@ -1,20 +1,25 @@
-import os
-import fnmatch
-import base64
-
 from typing import Annotated
 
-from fastapi import (APIRouter, Depends, Query)
+from fastapi import (APIRouter, Depends)
+from fastapi.responses import FileResponse
+
 from queries.images import ImageQuery
 from models.images import *
 
 router = APIRouter(tags=["IMAGES"])
 
-@router.get("/api/images/image_file")
+@router.get("/api/images/{image_id}")
 async def get_image_file(
-    ImageOut
+    image_id: int,
+    file: str | None = None,
+    repo: ImageQuery = Depends()
 ):
-    pass
+    image = repo.get_one_image(image_id)
+    if file:
+        image_file = repo.get_image_file(image)
+        return FileResponse(image_file)
+    return image
+
 
 @router.get("/api/images/")
 async def get_all_images(
@@ -43,23 +48,12 @@ async def get_all_images(
 
 
 @router.post("/api/images/")
-async def post_image(image: ImageIn, repo: ImageQuery = Depends()):
-    extensions = ("*.jpg", "*.jpeg", "*.png")
-    save_local = os.environ.get("Image_Repo")
-
-    repo.post_image(image)
-
-    split = image.base_64.split(",")
-    file_type, base_64 = split[0].split(";")[0].split("/")[1], split[1]
-    base_64 = base_64.encode("ascii") 
-    base_64 = base64.b64encode(base_64)
-
-    print(file_type)
-
-    count = 0
-    for extension in extensions:
-        if fnmatch.fnmatch(save_local, extension):
-            count += 1
-
-    with open(str(count) + f".{file_type}", "wb") as f:
-        f.write(base64.decodebytes(base_64))
+async def post_image(
+    image: ImageIn, 
+    repo: ImageQuery = Depends()
+):
+    filename = repo.upload_image_file(image)
+    if filename:
+        repo.post_image(image, filename)
+    else:
+        return {"Error": "Image failed to post."}
