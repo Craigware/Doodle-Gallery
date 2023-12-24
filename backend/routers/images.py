@@ -27,6 +27,7 @@ async def get_all_images(
         mediums: str | None = None,
         tags: str | None = None,
         created: str | None = None,
+        sort_style: str | None = "default",
         repo: ImageQuery = Depends()
     ):
 
@@ -42,9 +43,15 @@ async def get_all_images(
             "tags": tags,
             "created": created
         }
-
-        return repo.get_some_images(search)
-    return repo.get_all_images()
+        images = repo.get_some_images(search)
+        return repo.order_image_list(images, sort_style)
+    
+    images = repo.get_all_images()
+    
+    if (sort_style):
+        return repo.order_image_list(images, sort_style)
+    else:
+        return images
 
 
 @router.post("/api/images/")
