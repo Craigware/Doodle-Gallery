@@ -1,4 +1,4 @@
-const backend_url = "http://192.168.0.238:4000";
+backend_url = "http://localhost:8000"
 
 function createGallery(images){
     function createGalleryRow(rowLength){
@@ -71,7 +71,7 @@ async function searchFor(searchQuery){
 }
 
 async function fetchImages(){
-    let images = await fetch(backend_url + "/api/images/GetAllImages/");
+    let images = await fetch(backend_url + "/api/images/");
     let data = images.json();
     return data;
 }
@@ -163,7 +163,6 @@ const searchQuery = {
     tags: ""
 };
 let images = []
-
 
 window.addEventListener("load", () => {
     const searchForm = document.getElementById("SearchForm");
