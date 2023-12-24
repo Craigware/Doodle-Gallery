@@ -15,7 +15,7 @@
         <hr />
 
         <form id='SearchForm'>
-            <input id="SearchTextInput" class='medium-text' type='text' name='search' placeholder='Search; Doodle, Painting, etc...'/>
+            <input id="SearchTextInput" class='medium-text' type='text' name='title' placeholder='Search; Doodle, Painting, etc...'/>
             <select name='mediums'>
                 <option value="">Medium</option>
                 <option value="watercolor">Watercolor</option>
@@ -78,7 +78,8 @@
                 console.log(data);
             }
         </script>
-        
+        <hr />
+
         <form id="UploadDoodleForm" onsubmit="test(event)">
             <input type="text" onchange="handleFormData(event)" placeholder="Title" name="title" />
             <input type="file" onchange="handleFormData(event)" accept=".png, .jpg" placeholder="Image" name="filename"/>

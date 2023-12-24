@@ -10,6 +10,14 @@ class ImageQuery(Query):
     table = "images"
     image_repo = os.environ.get("Image_Repo")
 
+    def order_image_list(self, images: list, sort_style: str) -> list:
+        print(sort_style)
+        match sort_style:
+            case "default":
+                images.reverse()
+                return images
+
+
     def get_image_file(self, image: ImageOut) -> str | dict:
         local = self.image_repo + image.filename
         if os.path.isfile(local):

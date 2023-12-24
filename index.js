@@ -1,11 +1,19 @@
 backend_url = "http://localhost:8000"
 
-function createGallery(images){
+const getImageMeta = (url) => 
+    new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = (err) => reject(err);
+        img.src = url
+    });
+
+async function createGallery(images){
     function createGalleryRow(rowLength){
         let row = document.createElement("div");
         row.classList.add("gallery-row");
         row.style.gridTemplateColumns = `repeat(${rowLength}, 1fr)`
-        row.style.height = "20rem";
+        row.style.height = "480px";
         row.style.overflow = "hidden";
         return row
     }
@@ -13,38 +21,42 @@ function createGallery(images){
     gallery.style.height = "";
 
     const rowPattern = {
-        true: 7,
+        true: 5,
         false: 3
     };
 
-    let placeHolder = 1;
-    let rowLength = rowPattern[true];
-    let r = 0;
+    let currentPattern = true;
+    let rowLength = rowPattern[currentPattern];
     let row = createGalleryRow(rowLength);
+
+    let r = 0;
     for (let i = 0; i < images.length; i++){
         if (r >= rowLength) {
+            currentPattern = !currentPattern;
+            rowLength = rowPattern[currentPattern];
             if (rowLength > images.length - i) { rowLength = images.length - i; }
             row = createGalleryRow(rowLength);
+            console.log(rowLength);
             r = 0;
         }
 
-        const galleryItem = document.createElement("img");
-        const resolution =  images[i]["imageSize"];
-        const iSrc = "data:image/png;base64," + images[i]["image_base64"];
+        const iSrc = backend_url + "/api/images/" + `${images[i]["id"]}?file=true`;
+        const galleryItem = await getImageMeta(iSrc);
 
-        galleryItem.src = iSrc;
         galleryItem.classList.add("gallery-item");
 
-        galleryItem.onload = () => { this.loaded = true; }
         galleryItem.onclick = (e) => { showModal(e.target.src, images[i]); }
 
-        if (resolution["y"] <= resolution["x"]){
+        console.log()
+        
+        if (galleryItem.naturalHeight <= galleryItem.naturalWidth){
+            console.log("!")
             galleryItem.style.height = "100%";
             if (r+2 <= rowLength){
                 galleryItem.style.gridColumn = `span 2`;
                 r += 1;
             }
-        }
+        };
         r += 1;
         row.appendChild(galleryItem);
         gallery.appendChild(row);
@@ -64,7 +76,7 @@ async function searchFor(searchQuery){
         if (count == 4) { return fetchImages() }
     }
 
-    let url = backend_url + "/api/images/GetSomeImages?";
+    let url = backend_url + "/api/images/?";
     let images = await fetch(url + new URLSearchParams(searchQuery));
     let data = images.json();
     return data;
@@ -155,6 +167,13 @@ function showModal(imagePath, image){
 function updateSort(e){
 }
 
+async function testee(){
+    let e = await fetch(backend_url + "/api/images/12?file=true");
+    return e;
+}
+
+
+
 let sort = "";
 const searchQuery = {
     search: "",
@@ -174,11 +193,12 @@ window.addEventListener("load", () => {
 
     searchForm.addEventListener("change", (e) => {
         searchQuery[e.target.name] = e.target.value;
+
         searchFor(searchQuery).then((_images) => {
             images = _images;
             deleteGallery();
             createGallery(images);
-         });
+        });
     });
 
     searchForm.addEventListener("submit", (e) => {
