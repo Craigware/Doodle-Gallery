@@ -1,6 +1,8 @@
+import os
+
 from typing import Annotated
 
-from fastapi import (APIRouter, Depends)
+from fastapi import (APIRouter, Depends, Header)
 from fastapi.responses import FileResponse
 
 from queries.images import ImageQuery
@@ -46,8 +48,8 @@ async def get_all_images(
         images = repo.get_some_images(search)
         return repo.order_image_list(images, sort_style)
     
-    images = repo.get_all_images()
-    
+    images = repo.get_all_images()      
+
     if (sort_style):
         return repo.order_image_list(images, sort_style)
     else:
@@ -56,9 +58,11 @@ async def get_all_images(
 
 @router.post("/api/images/")
 async def post_image(
-    image: ImageIn, 
+    image: ImageIn,
+    Api_Access_Token: str = Header(..., convert_underscores=True),
     repo: ImageQuery = Depends()
 ):
+    if (not Api_Access_Token == os.environ.get("GALLERY_API_ACCESS_TOKEN")): return {"Error": "Invalid api token"}
     filename = repo.upload_image_file(image)
     if filename:
         repo.post_image(image, filename)

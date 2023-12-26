@@ -1,8 +1,8 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from routers import admin
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import images
 import os
-
 
 app = FastAPI(
     title="Doodle-Gallery",
@@ -26,5 +26,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
+app.include_router(admin.router)
 app.include_router(images.router)

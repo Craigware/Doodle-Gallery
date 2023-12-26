@@ -59,10 +59,8 @@ h1 {
     float: right;
 }
 
-.search-box {
-    height: 4rem;
-    width: auto;
-    background-color: black;
+#SearchTextInput {
+    width: calc(100% - 10px);
 }
 
 .gallery-item {

@@ -16,19 +16,6 @@
 
         <form id='SearchForm'>
             <input id="SearchTextInput" class='medium-text' type='text' name='title' placeholder='Search; Doodle, Painting, etc...'/>
-            <select name='mediums'>
-                <option value="">Medium</option>
-                <option value="watercolor">Watercolor</option>
-            </select>
-            <select name='created'>
-                <option value=''>Year</option>
-                <option value="2023">2023</option>
-            </select>
-            <select name='tags'>
-                <option value=''>Type</option>
-                <option value='Sketch'>Sketch</option>
-            </select>
-            <button style='float:right;'>Search</button>
         </form>
         <hr />
 
@@ -46,11 +33,16 @@
             const data = {};
             async function test(event){
                 event.preventDefault();
+
+                let accessToken = document.cookie.split("=");
+                accessToken = accessToken[accessToken.indexOf("api-access-token") + 1];
+
                 const response = await fetch("http://127.0.0.1:8000/api/images/", {
                     method: "POST",
                     mode: "cors",
                     headers: {
                         "Content-Type": "application/json",
+                        "Api-Access-Token": accessToken
                     },
                     redirect: "follow",
                     credentials: "same-origin",
@@ -59,7 +51,7 @@
             }
 
             async function handleFormData(e) {
-                const maxFileSize = 5 * 1048576; // mbAmount x 1mg amout in bits
+                const maxFileSize = 5 * 1048576;
                 if (e.target.name == "filename") {
                     if (e.target.files[0].size > maxFileSize ) { alert("File upload too large."); e.target.value = ""; return null; }
                     data[e.target.name] = e.target.files[0].name;
@@ -75,23 +67,17 @@
                 } else {
                     data[e.target.name] = e.target.value;
                 }
-                console.log(data);
             }
         </script>
         <hr />
 
         <form id="UploadDoodleForm" onsubmit="test(event)">
-            <input type="text" onchange="handleFormData(event)" placeholder="Title" name="title" />
-            <input type="file" onchange="handleFormData(event)" accept=".png, .jpg" placeholder="Image" name="filename"/>
-            <input type="text" onchange="handleFormData(event)" placeholder="Tags" name="tags"/>
-            <input type="text" onchange="handleFormData(event)" placeholder="Mediums" name="mediums"/>
-            <input type="date" onchange="handleFormData(event)" name="created"/>
-            <button>Upload</button>
+            
         </form>
     </main>
 </body>
 <footer>
-    <a>Admin Login</a>
+    <a onclick="adminLoginModal()">Admin Login</a>
     <a>Contact Me</a>
 </footer>
 </html>
