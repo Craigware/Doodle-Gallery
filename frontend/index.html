@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/index.js"> </script>
+</head>
+<body>
+    <main>
+        <div id="Hero" class="hero">
+            <form id='SearchForm'>
+                <input id="SearchTextInput" class='medium-text' type='text' name='title' placeholder='Search; Doodle, Painting, etc...'/>
+            </form>
+        </div>
+<!-- 
+        <div class="alert">
+            <p>Your feedback would be appreciated; 
+                <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSf5B5Ao4yeA0pq6dtFHlUEWwvFDJEyfkWXIWC6KOJqUCEqy8A/viewform">
+                    Creature feedback form
+                </a>
+            </p>
+            <button onclick="closeAlert()"> X </button>
+        </div> -->
+
+        <div id="Gallery" class="gallery" style="height: 1080px">
+        </div>
+
+
+        <form id="UploadDoodleForm" onsubmit="submitUploadForm(event)"></form>
+    </main>
+</body>
+<footer>
+    <a onclick="adminLoginModal()">Admin Login</a>
+    <a>Contact Me</a>
+</footer>
+</html>
