@@ -11,12 +11,13 @@ class ImageQuery(Query):
     image_repo = os.environ.get("Image_Repo")
 
     def order_image_list(self, images: list, sort_style: str) -> list:
-        print(sort_style)
         match sort_style:
             case "default":
                 images.reverse()
-                return images
-
+            case "date_created":
+                pass
+        return images
+    
 
     def get_image_file(self, image: ImageOut) -> str | dict:
         local = self.image_repo + image.filename
@@ -147,7 +148,6 @@ class ImageQuery(Query):
 
         all_images = []
         for image in res:
-            print(image)
             _image = ImageOut(
                 id=image[0], 
                 filename=image[1],

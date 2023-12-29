@@ -8,6 +8,34 @@ const getImageMeta = (url) =>
         img.src = url
     });
 
+async function adminLogin(pass){
+    const data = {"pwd": pass}
+    let res = await fetch(backend_url + "/api/admin/login/", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+        const response = await res.json();
+        if (response["Token"] != undefined){
+            document.cookie = `api-access-token=${response["Token"]}`;
+            const main = document.getElementsByTagName("main")[0];
+            main.removeChild(main.children[main.children.length - 1]);
+            window.onscroll = () => {}
+        } else {
+            console.log("Bad password");
+        }
+    } else {
+        console.log("error");
+    }
+}
+
+
+
 async function createGallery(images){
     function createGalleryRow(rowLength){
         let row = document.createElement("div");
@@ -36,7 +64,6 @@ async function createGallery(images){
             rowLength = rowPattern[currentPattern];
             if (rowLength > images.length - i) { rowLength = images.length - i; }
             row = createGalleryRow(rowLength);
-            console.log(rowLength);
             r = 0;
         }
 
@@ -47,10 +74,8 @@ async function createGallery(images){
 
         galleryItem.onclick = (e) => { showModal(e.target.src, images[i]); }
 
-        console.log()
         
         if (galleryItem.naturalHeight <= galleryItem.naturalWidth){
-            console.log("!")
             galleryItem.style.height = "100%";
             if (r+2 <= rowLength){
                 galleryItem.style.gridColumn = `span 2`;
@@ -86,6 +111,58 @@ async function fetchImages(){
     let images = await fetch(backend_url + "/api/images/");
     let data = images.json();
     return data;
+}
+
+
+// make these 2 functions 1 at some point
+// probably convert to class
+function adminLoginModal(){
+    const main = document.getElementsByTagName("main")[0];
+    const modal = document.createElement("div");
+    const background = document.createElement("div");
+    const form = document.createElement("form");
+    const inp = document.createElement("input");
+
+    form.onsubmit = (e) => { e.preventDefault(); adminLogin(pwd) };
+    const yOffset = window.scrollY;
+    window.onscroll = () => { window.scrollTo(0,yOffset);};
+
+    background.onclick = () => {
+        main.removeChild(main.children[main.children.length - 1]);
+        window.onscroll = () => {};
+    };
+
+    inp.onchange = (e) => { pwd = e.target.value }
+    inp.type = "password";
+    inp.placeholder = "Admin Login";
+    form.style.cssText = `
+        position: absolute;
+        z-index: 100;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    `
+
+    modal.style.cssText = `
+        cursor: pointer;
+        position: absolute;
+        height: 100vh;
+        width: 100%;
+        left: 0;
+        top: ${yOffset}px;
+    `;
+
+    background.style.cssText = `
+        position: absolute;
+        background-color: black;
+        height: 100%;
+        width: 100%;
+        opacity: 80%;
+    `;
+    form.appendChild(inp);
+    modal.appendChild(form);
+    modal.appendChild(background);
+    main.appendChild(modal);
 }
 
 function showModal(imagePath, image){
@@ -144,7 +221,6 @@ function showModal(imagePath, image){
 
     let createdOn = new Date(image["created"]);
     title.innerHTML = "<span style='text-decoration:underline;'>" + image["title"] + "</span>; " + createdOn.toLocaleDateString();
-    console.log(image);
     title.style.cssText = `
         color: white;
         width: 100%;
@@ -172,8 +248,6 @@ async function testee(){
     return e;
 }
 
-
-
 let sort = "";
 const searchQuery = {
     search: "",
@@ -183,8 +257,30 @@ const searchQuery = {
 };
 let images = []
 
+let pwd = null;
+
+const accessToken = document.cookie.split("=");
+const admin = accessToken[accessToken.indexOf("api-access-token") + 1] != undefined;
+
+function adminCheck(uploadForm){
+    if (admin){
+        uploadForm.innerHTML = `
+            <input type="text" onchange="handleFormData(event)" placeholder="Title" name="title" />
+            <input type="file" onchange="handleFormData(event)" accept=".png, .jpg" placeholder="Image" name="filename"/>
+            <input type="text" onchange="handleFormData(event)" placeholder="Tags" name="tags"/>
+            <input type="text" onchange="handleFormData(event)" placeholder="Mediums" name="mediums"/>
+            <input type="date" onchange="handleFormData(event)" name="created"/>
+            <button>Upload</button>
+        `;
+    }
+}
+
+
 window.addEventListener("load", () => {
     const searchForm = document.getElementById("SearchForm");
+    const uploadForm = document.getElementById("UploadDoodleForm");
+
+    adminCheck(uploadForm);
 
     fetchImages().then((_images) => {
         createGallery(_images);
