@@ -8,7 +8,10 @@ router = APIRouter(tags=["ADMIN LOGIN"])
 async def admin_login(
         body: dict
     ):
-    if body["pwd"] == os.environ.get("SQL_PASS"):
-        return {"Token": os.environ.get("GALLERY_API_ACCESS_TOKEN")}
-    else:
-        return {"Error": "Invalid password."}
+    try:
+        if body["pwd"] == os.environ.get("SQL_PASS"):
+            return {"Token": os.environ.get("GALLERY_API_ACCESS_TOKEN")}
+        else:
+            return {"Error": "Invalid password."}
+    except:
+        return {"Error": "Body does not contain PWD."}

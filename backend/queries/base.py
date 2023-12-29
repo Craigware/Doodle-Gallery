@@ -6,9 +6,9 @@ class Query:
 
     def connect_db(self):
         self.db_con = mysql.connector.connect(
-            username="craig",
-            password=os.environ.get("SQL_PASS"),
-            database="gallerydb"
+            host="gallerydb",
+            password=os.environ.get("MYSQL_ROOT_PASSWORD"),
+            database=os.environ.get("MYSQL_DATABASE")
         )
 
         return self.db_con

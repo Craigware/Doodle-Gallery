@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Roboto+Slab:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    font-family: 'Roboto Slab', serif;
+    /* background-color: #8C7E7E; */
+}
+
+
+
+input, button, select{
+    all: unset;
+    background-color: white;
+    height: 2rem;
+    padding: 4px;
+}
+
+
+html {
+    background-color: #4e4e55;
+}
+
+
+#Hero {
+    background-image: url("../img/Hero-Banner.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 1rem;
+    height: 160px;
+    box-shadow: 0px 0px 10px #2F2929;
+
+    & input[type=text] {
+        box-shadow: 0px 0px 10px white;
+        padding: .75rem;
+        width: 75%;
+        
+        position: absolute;
+        bottom: 15%;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+}
+
+.alert::before{
+    display: inline;
+    content: "- "
+}
+.alert {
+    background-color: #F0F9BE;
+    padding: 1rem;
+    & p {
+        display: inline;
+    }
+}
+.alert button{
+    padding: 0;
+    margin: 0;
+    background-color: unset;
+    display: inline;
+    float: right;
+}
+
+footer {
+    position: fixed;
+    display: flex;
+    background-color: #2F2929;
+    width: 100%;
+    color: white;
+    padding: 1rem 0rem;
+    bottom: 0;
+
+    & a {
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+}
+
+#Gallery {
+    padding: 0rem 7.5%;
+}
+
+.gallery-item {
+    width: 100%;
+    border-radius: 1rem;
+    object-fit: cover;
+    overflow: hidden;
+    animation: fadeIn 1s;
+    cursor: pointer;
+    box-shadow: 0px 0px 20px black;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 100%;
+    }
+}
+
+.gallery-row {
+    display: grid;
+    text-align: center;
+    gap: 1rem;
+    padding: .5rem 5rem;
+}
