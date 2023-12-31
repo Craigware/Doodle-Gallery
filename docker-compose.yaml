@@ -1,0 +1,10 @@
+services:
+  fastapi:
+    build:
+      context: backend
+      dockerfile: dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      SQL_PASS: ${SQL_PASS}
+      GALLERY_API_ACCESS_TOKEN: ${GALLERY_API_ACCESS_TOKEN}
