@@ -278,12 +278,15 @@ async function searchFor(searchQuery){
     let url = backend_url + "/images/?";
     let images = await fetch(url + new URLSearchParams(searchQuery));
     let data = await images.json();
+    console.log(data);
+    console.log(url + new URLSearchParams(searchQuery));
     return data;
 }
 
 async function fetchImages(){
     let images = await fetch(backend_url + "/images/");
     let data = await images.json();
+    console.log(data);
     return data;
 }
 
