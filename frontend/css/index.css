@@ -30,17 +30,16 @@ html {
     padding: 1rem;
     height: 160px;
     box-shadow: 0px 0px 10px #2F2929;
-
-    & input[type=text] {
-        box-shadow: 0px 0px 10px white;
-        padding: .75rem;
-        width: 75%;
-        
-        position: absolute;
-        bottom: 15%;
-        left: 50%;
-        transform: translate(-50%, 0);
-    }
+}
+#Hero input[type=text] {
+    box-shadow: 0px 0px 10px white;
+    padding: .75rem;
+    width: 75%;
+    
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
 .alert::before{
@@ -70,41 +69,12 @@ footer {
     color: white;
     padding: 1rem 0rem;
     bottom: 0;
-
-    & a {
-        cursor: pointer;
-        margin-left: 1rem;
-    }
-
 }
 
-
-
-/* .alert {
-    --alert-font-size: 18px;
-    background-color: rgb(243, 255, 137);
-    padding: 1rem .5rem;
-    
-    & p{
-        font-size: 18px;
-        margin: auto;
-        display: inline;
-    }
+footer a{
+    cursor: pointer;
+    margin-left: 1rem;
 }
-
-.alert::before{
-    content: "-";
-}
-
-.alert::after {
-    content: "";
-    width: calc(18px + 3px);
-    height: calc(18px + 3px);
-    background-color: black;
-    background-size: cover;
-    float: right;
-} */
-
 
 #Gallery {
     padding: 0rem 7.5%;

@@ -1,0 +1,5 @@
+FROM mysql:latest
+
+COPY init-db.sql /docker-entrypoint-initdb.d/
+
+CMD ["mysqld", "--init-file=/docker-entrypoint-initdb.d/init-db.sql"]

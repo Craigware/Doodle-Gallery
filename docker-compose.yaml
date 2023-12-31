@@ -1,10 +1,47 @@
+volumes:
+  gallerydb:
+
+networks:
+  doodle-gallery:
+    driver: bridge
+
 services:
-  fastapi:
+  gallerydb:
     build:
-      context: backend
-      dockerfile: dockerfile
+      dockerfile: dockerfile.db
+    networks:
+      - doodle-gallery
     ports:
-      - 8000:8000
+     - "8008:8008"
+    volumes:
+      - gallerydb:/var/lib/mysql
     environment:
-      SQL_PASS: ${SQL_PASS}
-      GALLERY_API_ACCESS_TOKEN: ${GALLERY_API_ACCESS_TOKEN}
+      - MYSQL_ROOT_PASSWORD=${SQL_ROOT_PASS}
+      - MYSQL_DATABASE=${SQL_DB}
+  
+  backend:
+    build:
+      context: ./backend
+    networks:
+      - doodle-gallery
+    ports:
+      - "8000:8000"
+    depends_on:
+      - gallerydb
+    environment:
+      - GALLERY_API_ACCESS_TOKEN=${GALLERY_API_ACCESS_TOKEN}
+      - MYSQL_ROOT_PASSWORD=${SQL_ROOT_PASS}
+      - MYSQL_DATABASE=${SQL_DB}
+      - SQL_PASS=${SQL_PASS}
+  
+  frontend:
+    image: nginx:latest
+    networks:
+      - doodle-gallery
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./frontend:/usr/share/nginx/frontend
+    depends_on:
+      - backend

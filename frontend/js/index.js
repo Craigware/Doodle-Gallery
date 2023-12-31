@@ -302,8 +302,7 @@ function adminCheck(uploadForm){
         `;
     }
 }
-
-const backend_url = "http://127.0.0.1:8000"
+const backend_url = "http://0.0.0.0:8000";
 const data = {};
 const searchQuery = {
     search: "",
@@ -322,7 +321,7 @@ const admin = accessToken[accessToken.indexOf("api-access-token") + 1] != undefi
 window.addEventListener("load", () => {
     const searchForm = document.getElementById("SearchForm");
     const uploadForm = document.getElementById("UploadDoodleForm");
-
+    console.log("!!!");
     adminCheck(uploadForm);
 
     fetchImages().then((_images) => {
