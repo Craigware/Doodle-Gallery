@@ -13,5 +13,6 @@
             "database": "GalleryDB",
             "username": "Craig"
         }
-    ]
+    ],
+    "liveServer.settings.port": 5501
 }

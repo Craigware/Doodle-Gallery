@@ -1,5 +1,8 @@
 .env
 ./backend/images/
+.pem
+.key
+./SSL/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
