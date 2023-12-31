@@ -302,8 +302,7 @@ function adminCheck(uploadForm){
         `;
     }
 }
-
-const backend_url = "1.1.1.1:8000"
+const backend_url = "http://0.0.0.0:8000";
 const data = {};
 const searchQuery = {
     search: "",

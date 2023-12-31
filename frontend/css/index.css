@@ -30,17 +30,16 @@ html {
     padding: 1rem;
     height: 160px;
     box-shadow: 0px 0px 10px #2F2929;
-
-    & input[type=text] {
-        box-shadow: 0px 0px 10px white;
-        padding: .75rem;
-        width: 75%;
-        
-        position: absolute;
-        bottom: 15%;
-        left: 50%;
-        transform: translate(-50%, 0);
-    }
+}
+#Hero input[type=text] {
+    box-shadow: 0px 0px 10px white;
+    padding: .75rem;
+    width: 75%;
+    
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
 .alert::before{
@@ -70,12 +69,11 @@ footer {
     color: white;
     padding: 1rem 0rem;
     bottom: 0;
+}
 
-    & a {
-        cursor: pointer;
-        margin-left: 1rem;
-    }
-
+footer a{
+    cursor: pointer;
+    margin-left: 1rem;
 }
 
 #Gallery {
