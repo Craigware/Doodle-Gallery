@@ -7,7 +7,6 @@ class Gallery{
         img.src = url
     });
 
-
     static async createGallery(images){
         function createGalleryRow(rowLength){
             let row = document.createElement("div");
@@ -20,29 +19,44 @@ class Gallery{
         const gallery = document.getElementById("Gallery");
         gallery.style.height = "";
     
-        const rowPattern = {
-            true: 5,
-            false: 3,
-            desktop: (5, 3),
-            mobile: (1, 1),
-            tablet: (3, 2)
+        const rowPatterns = {
+            "desktop": [5, 3],
+            "mobile": [1, 1],
+            "tablet": [3, 2]
         };
         
-        let currentPattern = true;
-        let rowLength = rowPattern[currentPattern];
-        let row = createGalleryRow(rowLength);
-    
+        // Swapping pattern
+        let currentPattern = null;
+        switch (true) {
+            // Desktop
+            case (window.innerWidth >= 1080):
+                currentPattern = "desktop"
+                break;
+            // Tablet
+            case (window.innerWidth >= 720):
+                currentPattern = "tablet"
+                break;
+            // Mobile
+            case (window.innerWidth < 720):
+                currentPattern = "mobile"
+                break;
+        }
+
+        let rowLengths = rowPatterns[currentPattern];
+        let currLen = 0;
+
+
+        let row = createGalleryRow(rowLengths[currLen]);
         let r = 0;
         for (let i = 0; i < images.length; i++){
-            if (r >= rowLength) {
-                currentPattern = !currentPattern;
-                rowLength = rowPattern[currentPattern];
-                if (rowLength > images.length - i) { rowLength = images.length - i; }
-                row = createGalleryRow(rowLength);
+            if (r >= rowLengths[currLen]) {
+                if (currLen == 0) { currLen = 1; } else { currLen = 0; }
+                if (rowLengths[currLen] > images.length - i) { rowLengths[currLen] = images.length - i; }
+                row = createGalleryRow(rowLengths[currLen]);
                 r = 0;
             }
     
-            const iSrc = backend_url + "/api/images/" + `${images[i]["id"]}?file=true`;
+            const iSrc = backend_url + "/images/" + `${images[i]["id"]}?file=true`;
             const galleryItem = await this.getImageMeta(iSrc);
     
             galleryItem.classList.add("gallery-item");
@@ -52,7 +66,7 @@ class Gallery{
     
             
             if (galleryItem.naturalHeight <= galleryItem.naturalWidth){
-                if (r+2 <= rowLength){
+                if (r+2 <= rowLengths[currLen]){
                     galleryItem.style.gridColumn = `span 2`;
                     r += 1;
                 }
@@ -61,6 +75,7 @@ class Gallery{
             row.appendChild(galleryItem);
             gallery.appendChild(row);
         }
+        gallery.style.height = "auto";
     }
 
     static deleteGallery(){
@@ -94,6 +109,7 @@ class modals{
         `;
         
         background.onclick = () => {
+            this.removeExistingModals();
             window.onscroll = () => {};
         };
 
@@ -117,11 +133,6 @@ class modals{
             top: ${yOffset}px;
         `;
 
-        modal.onclick = () => {
-            this.removeExistingModals();
-            window.onscroll = () => {};
-        };
-
         return modal;
     }
 }
@@ -135,7 +146,7 @@ function adminLoginModal(){
     
     const form = document.createElement("form");
     form.id = "Admin-Login";
-    form.onsubmit = (e) => { e.preventDefault(); adminLogin(pwd) };
+    form.onsubmit = async (e) => { e.preventDefault(); let passed = await adminLogin(pwd); if (passed) { window.location.reload(); } };
 
 
     const inp = document.createElement("input");
@@ -162,6 +173,11 @@ function showModal(imagePath, image){
     const main = document.getElementsByTagName("html")[0];
     const background = modals.createBackground();
     const modal = modals.createModal();
+
+    modal.onclick = () => {
+        modals.removeExistingModals();
+        window.onscroll = () => {};
+    };
 
     const img = document.createElement("img");
     const imgContainer = document.createElement("div");
@@ -212,7 +228,7 @@ async function submitUploadForm(event){
     let accessToken = document.cookie.split("=");
     accessToken = accessToken[accessToken.indexOf("api-access-token") + 1];
 
-    const response = await fetch(backend_url + "/api/images/", {
+    const response = await fetch(backend_url + "/images/", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -223,6 +239,13 @@ async function submitUploadForm(event){
         credentials: "same-origin",
         body: JSON.stringify(data),
     });
+
+    if (response.ok) {
+        const inputs = event.target.children;
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].value = "";
+        }
+    }
 }
 
 async function handleFormData(e) {
@@ -252,21 +275,24 @@ async function searchFor(searchQuery){
         if (count == 4) { return fetchImages() }
     }
 
-    let url = backend_url + "/api/images/?";
+    let url = backend_url + "/images/?";
     let images = await fetch(url + new URLSearchParams(searchQuery));
     let data = await images.json();
+    console.log(data);
+    console.log(url + new URLSearchParams(searchQuery));
     return data;
 }
 
 async function fetchImages(){
-    let images = await fetch(backend_url + "/api/images/");
+    let images = await fetch(backend_url + "/images/");
     let data = await images.json();
+    console.log(data);
     return data;
 }
 
 async function adminLogin(pass){
     const data = {"pwd": pass}
-    let res = await fetch(backend_url + "/api/admin/login/", {
+    let res = await fetch(backend_url + "/admin/login/", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -282,27 +308,79 @@ async function adminLogin(pass){
             const main = document.getElementsByTagName("main")[0];
             main.removeChild(main.children[main.children.length - 1]);
             window.onscroll = () => {}
+            return true;
         } else {
             console.log("Bad password");
+            return false;
         }
     } else {
-        console.log("error");
+        return false;
     }
 }
 
-function adminCheck(uploadForm){
-    if (admin){
-        uploadForm.innerHTML = `
-            <input type="text" onchange="handleFormData(event)" placeholder="Title" name="title" />
-            <input type="file" onchange="handleFormData(event)" accept=".png, .jpg" placeholder="Image" name="filename"/>
-            <input type="text" onchange="handleFormData(event)" placeholder="Tags" name="tags"/>
-            <input type="text" onchange="handleFormData(event)" placeholder="Mediums" name="mediums"/>
-            <input type="date" onchange="handleFormData(event)" name="created"/>
-            <button>Upload</button>
+function showUploadModal(){
+    modals.removeExistingModals();
+
+    const main = document.getElementsByTagName("main")[0];
+    const modal = modals.createModal();
+    const background = modals.createBackground();
+    
+    const form = document.createElement("form");
+    form.id = "UploadDoodleForm";
+    form.onsubmit = (e) => { submitUploadForm(e) }
+
+    form.innerHTML = `
+        <input type="text" onchange="handleFormData(event)" placeholder="Title" name="title" />
+        <input type="text" onchange="handleFormData(event)" placeholder="Tags" name="tags"/>
+        <input type="text" onchange="handleFormData(event)" placeholder="Mediums" name="mediums"/>
+        <input type="date" onchange="handleFormData(event)" name="created"/>
+        <input type="file" onchange="handleFormData(event)" accept=".png, .jpg" placeholder="Image" name="filename"/>
+        <button>Upload</button>
+    `
+    form.style.cssText = `
+        position: relative;
+        width: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(255, 255, 255, 0.315);
+        border-radius: 2rem;
+        padding: 2rem;
+    `
+
+    for (let i = 0; i < form.children.length; i++) {
+        form.children[i].style.cssText = `
+            opacity: 100%;
+            display: block;
+            width: 100%;
+            margin: 1rem 0;
+            align-items: center;
+            vertical-align: middle;
         `;
     }
+
+    modal.appendChild(background);
+    modal.appendChild(form);
+    main.appendChild(modal);
 }
-const backend_url = "http://0.0.0.0:8000";
+
+function getCookies(){
+    const cookieString = document.cookie;
+    const cookieSeparated = cookieString.split(";");
+    const cookies = {};
+
+    for (let i = 0; i < cookieSeparated.length; i ++){
+        const keyVal = cookieSeparated[i].split("=");
+        cookies[keyVal[0]] = keyVal[1];
+    }
+
+    return cookies;
+}
+
+
+const cookies = getCookies();
+const admin = cookies["api-access-token"] != undefined;
+const backend_url = "http://localhost:8080/backend";
 const data = {};
 const searchQuery = {
     search: "",
@@ -315,14 +393,16 @@ let images = []
 let sort = "";
 let pwd = null;
 
-const accessToken = document.cookie.split("=");
-const admin = accessToken[accessToken.indexOf("api-access-token") + 1] != undefined;
 
 window.addEventListener("load", () => {
     const searchForm = document.getElementById("SearchForm");
-    const uploadForm = document.getElementById("UploadDoodleForm");
-    console.log("!!!");
-    adminCheck(uploadForm);
+    const footer = document.getElementById("Sticky-Footer")
+
+    if (admin){
+        const adminOption = footer.children[0];
+        adminOption.innerHTML = "Upload Image";
+        adminOption.onclick = showUploadModal;
+    }
 
     fetchImages().then((_images) => {
         Gallery.createGallery(_images);
@@ -344,3 +424,15 @@ window.addEventListener("load", () => {
     });
 });
 
+let acceptingResize = true;
+async function resizeWindow(e){
+    if (acceptingResize) {
+        acceptingResize = false;
+
+        Gallery.deleteGallery();
+        await Gallery.createGallery(images)
+        acceptingResize = true;
+    }
+}
+
+window.addEventListener("resize", resizeWindow);

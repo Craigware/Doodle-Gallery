@@ -1,5 +1,7 @@
 volumes:
   gallerydb:
+  image_repo:
+    external: true
 
 networks:
   doodle-gallery:
@@ -26,6 +28,8 @@ services:
       - doodle-gallery
     ports:
       - "8000:8000"
+    volumes:
+      - ${IMAGE_REPO_PATH}:/app/images
     depends_on:
       - gallerydb
     environment:
@@ -33,6 +37,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${SQL_ROOT_PASS}
       - MYSQL_DATABASE=${SQL_DB}
       - SQL_PASS=${SQL_PASS}
+      - IMAGE_REPO_PATH=${IMAGE_REPO_PATH}
   
   frontend:
     image: nginx:latest

@@ -2,13 +2,12 @@ import os
 import base64
 from fnmatch import fnmatch
 
-from fastapi import UploadFile
 from .base import Query
 from models.images import *
 
 class ImageQuery(Query):
     table = "images"
-    image_repo = os.environ.get("Image_Repo")
+    image_repo = "./images/"
 
     def order_image_list(self, images: list, sort_style: str) -> list:
         match sort_style:
@@ -18,7 +17,6 @@ class ImageQuery(Query):
                 pass
         return images
     
-
     def get_image_file(self, image: ImageOut) -> str | dict:
         local = self.image_repo + image.filename
         if os.path.isfile(local):
@@ -27,25 +25,27 @@ class ImageQuery(Query):
     
 
     def upload_image_file(self, image: ImageIn) -> bool:
-        extensions = ("jpg", "jpeg", "png")
-        base_64 = image.base_64
-        split = base_64.split(",")
-        file_type, base_64 = split[0].split(";")[0].split("/")[1], split[1]
+        try:
+            extensions = ("jpg", "jpeg", "png")
+            base_64 = image.base_64
+            split = base_64.split(",")
+            file_type, base_64 = split[0].split(";")[0].split("/")[1], split[1]
 
-        if file_type in extensions:
-            base_64 = base64.b64decode(base_64)
+            if file_type in extensions:
+                base_64 = base64.b64decode(base_64)
+                count = 0
+                for extension in extensions:
+                    for file in os.listdir(self.image_repo):
+                        if fnmatch(file, "*." + extension): count += 1
 
-            count = 0
-            for extension in extensions:
-                for file in os.listdir(self.image_repo):
-                    if fnmatch(file, "*." + extension): count += 1
-
-            filename = f"image_{count}" + "." + file_type
-            with open(self.image_repo + filename, "wb") as f:
-                f.write(base_64)
-            
-            return filename
-        return False
+                filename = f"image_{count}" + "." + file_type
+                with open(self.image_repo + filename, "wb") as f:
+                    f.write(base_64)
+                
+                return filename
+            return False
+        except:
+            return False
         
 
     def get_one_image(self, image_id) -> ImageOut | dict:
@@ -76,7 +76,7 @@ class ImageQuery(Query):
     def get_all_images(self) -> list:
         self.connect_db()
         cursor = self.db_con.cursor()
-
+        
         query = f"""
             SELECT * FROM {self.table}
         """
