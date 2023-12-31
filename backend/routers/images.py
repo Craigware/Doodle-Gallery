@@ -59,12 +59,12 @@ async def get_all_images(
 @router.post("/api/images/")
 async def post_image(
     image: ImageIn,
-    Api_Access_Token: str = Header(..., convert_underscores=True),
+    api_access_token: str = Header(..., convert_underscores=True),
     repo: ImageQuery = Depends()
 ):
-    if (not Api_Access_Token == os.environ.get("GALLERY_API_ACCESS_TOKEN")): return {"Error": "Invalid api token"}
+    if (not api_access_token == os.environ.get("GALLERY_API_ACCESS_TOKEN")): return {"Error": "Invalid api token"}
     filename = repo.upload_image_file(image)
     if filename:
-        repo.post_image(image, filename)
+        return repo.post_image(image, filename)
     else:
         return {"Error": "Image failed to post."}
