@@ -3,7 +3,7 @@ import base64
 from fnmatch import fnmatch
 from enum import Enum
 
-from .base import Query
+from .base import Query, quick_sort_date
 from models.images import *
 
 class OrderStyle(Enum):
@@ -19,7 +19,8 @@ class ImageQuery(Query):
             case OrderStyle.DEFAULT:
                 images.reverse()
             case OrderStyle.DATE_CREATED:
-                pass
+                quick_sort_date(images)
+                images.reverse()
         return images
     
 
@@ -31,27 +32,24 @@ class ImageQuery(Query):
     
 
     def upload_image_file(self, image: ImageIn) -> bool:
-        try:
-            extensions = ("jpg", "jpeg", "png")
-            base_64 = image.base_64
-            split = base_64.split(",")
-            file_type, base_64 = split[0].split(";")[0].split("/")[1], split[1]
+        extensions = ("jpg", "jpeg", "png")
+        base_64 = image.base_64
+        split = base_64.split(",")
+        file_type, base_64 = split[0].split(";")[0].split("/")[1], split[1]
 
-            if file_type in extensions:
-                base_64 = base64.b64decode(base_64)
-                count = 0
-                for extension in extensions:
-                    for file in os.listdir(self.image_repo):
-                        if fnmatch(file, "*." + extension): count += 1
+        if file_type in extensions:
+            base_64 = base64.b64decode(base_64)
+            count = 0
+            for extension in extensions:
+                for file in os.listdir(self.image_repo):
+                    if fnmatch(file, "*." + extension): count += 1
 
-                filename = f"image_{count}" + ".jpg"
-                with open(self.image_repo + filename, "wb") as f:
-                    f.write(base_64)
-                
-                return filename
-            return False
-        except:
-            return False
+            filename = f"image_{count}" + ".jpg"
+            with open(self.image_repo + filename, "wb") as f:
+                f.write(base_64)
+            
+            return filename
+        return False
         
 
     def get_one_image(self, image_id) -> ImageOut | dict:
@@ -72,7 +70,9 @@ class ImageQuery(Query):
                 title=res[2],
                 mediums=res[3],
                 tags=res[4],
-                created=res[5]
+                created=res[5],
+                description=res[6],
+                orientation=res[7]
             )
             return image
         else: 
@@ -99,7 +99,9 @@ class ImageQuery(Query):
                 title=image[2],
                 mediums=image[3],
                 tags=image[4],
-                created=image[5]
+                created=image[5],
+                description=image[6],
+                orientation=image[7]
             )
             all_images.append(_image)
 
@@ -126,7 +128,9 @@ class ImageQuery(Query):
                 title=image[2],
                 mediums=image[3],
                 tags=image[4],
-                created=image[5]
+                created=image[5],
+                description=image[6],
+                orientation=image[7]
             )
             all_images.append(_image)
         
@@ -187,7 +191,9 @@ class ImageQuery(Query):
                 title=image[2],
                 mediums=image[3],
                 tags=image[4],
-                created=image[5]
+                created=image[5],
+                description=image[6],
+                orientation=image[7]
             )
             all_images.append(_image)
 
@@ -199,15 +205,17 @@ class ImageQuery(Query):
         cursor = self.db_con.cursor()
 
         query = f"""
-            INSERT INTO {self.table} (filename, title, tags, mediums, created)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO {self.table} (filename, title, tags, mediums, created, descript, orientation)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
         values = (
             filename,
             image.title,
             image.tags,
             image.mediums,
-            image.created
+            image.created,
+            image.description, 
+            image.orientation
         )
 
         cursor.execute(query, values)

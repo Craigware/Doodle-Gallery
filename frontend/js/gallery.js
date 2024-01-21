@@ -55,13 +55,14 @@ export default class Gallery{
         for (let i = 0; i < images.length; i++){
             if (r >= rowLengths[currLen]) {
                 if (currLen == 0) { currLen = 1; } else { currLen = 0; }
-                if (rowLengths[currLen] > images.length - i) { rowLengths[currLen] = images.length - i; }
                 row = createGalleryRow(rowLengths[currLen]);
                 r = 0;
             }
             
             const iSrc = backend_url + "/images/" + `${images[i]["id"]}?file=true&compressed=true`;
-            const galleryItem = await this.getImageMeta(iSrc);
+            const galleryItem = new Image();
+            galleryItem.src = iSrc;
+            galleryItem.alt = images[i]["description"];
     
             galleryItem.classList.add("gallery-item");
     
@@ -69,7 +70,7 @@ export default class Gallery{
             galleryItem.style.height = "100%";
     
             
-            if (galleryItem.naturalHeight <= galleryItem.naturalWidth){
+            if (images[i]["orientation"] == "landscape"){
                 if (r+2 <= rowLengths[currLen]){
                     galleryItem.style.gridColumn = `span 2`;
                     r += 1;
@@ -90,7 +91,6 @@ export default class Gallery{
     static async fetchImages(){
         let images = await fetch(backend_url + "/images?range_start=0&range_end=30");
         let data = await images.json();
-        console.log(data);
         return data;
     }
 }

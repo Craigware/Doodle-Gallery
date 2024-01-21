@@ -21,13 +21,13 @@ const searchQuery = {
     search: "",
     mediums: "",
     created: "",
-    tags: ""
+    tags: "",
+    sort_style: ""
 };
 
 let images = []
 let sort = "";
 let pwd = null;
-
 
 window.addEventListener("load", () => {
     const searchForm = document.getElementById("SearchForm");

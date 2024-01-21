@@ -1,3 +1,4 @@
+import Gallery from "./gallery.js";
 const backend_url = "/backend";
 
 export async function submitUploadForm(event){
@@ -32,14 +33,21 @@ export async function handleFormData(e) {
         if (e.target.files[0].size > maxFileSize ) { alert("File upload too large."); e.target.value = ""; return null; }
         data[e.target.name] = e.target.files[0].name;
 
-        let file = e.target.files[0]
+        let file = e.target.files[0];
+
         const reader = new FileReader();
 
-        reader.addEventListener("load", () => {
+        reader.addEventListener("load", async (e) => {
             data["base_64"] = reader.result;
-        });
 
-        await reader.readAsDataURL(file);
+            let uploadedImage = new Image();
+            uploadedImage.src = reader.result;
+            uploadedImage.onload = () => {
+                let orientation = (uploadedImage.height >= uploadedImage.width) ? "portrait" : "landscape";
+                data["orientation"] = orientation;
+            }
+        });
+        reader.readAsDataURL(file);
     } else {
         data[e.target.name] = e.target.value;
     }
