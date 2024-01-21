@@ -380,7 +380,7 @@ function getCookies(){
 
 const cookies = getCookies();
 const admin = cookies["api-access-token"] != undefined;
-const backend_url = "https://craigj.art/backend";
+const backend_url = "http://localhost:8000/api";
 const data = {};
 const searchQuery = {
     search: "",
