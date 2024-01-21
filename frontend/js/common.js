@@ -1,0 +1,1 @@
+const backend_url = "/backend";

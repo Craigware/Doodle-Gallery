@@ -1,22 +1,28 @@
 import os
 import base64
 from fnmatch import fnmatch
+from enum import Enum
 
 from .base import Query
 from models.images import *
+
+class OrderStyle(Enum):
+    DEFAULT = "default"
+    DATE_CREATED = "date_created"
 
 class ImageQuery(Query):
     table = "images"
     image_repo = "./images/"
 
-    def order_image_list(self, images: list, sort_style: str) -> list:
+    def order_image_list(self, images: list, sort_style: OrderStyle) -> list:
         match sort_style:
-            case "default":
+            case OrderStyle.DEFAULT:
                 images.reverse()
-            case "date_created":
+            case OrderStyle.DATE_CREATED:
                 pass
         return images
     
+
     def get_image_file(self, image: ImageOut) -> str | dict:
         local = self.image_repo + image.filename
         if os.path.isfile(local):
@@ -38,7 +44,7 @@ class ImageQuery(Query):
                     for file in os.listdir(self.image_repo):
                         if fnmatch(file, "*." + extension): count += 1
 
-                filename = f"image_{count}" + "." + file_type
+                filename = f"image_{count}" + ".jpg"
                 with open(self.image_repo + filename, "wb") as f:
                     f.write(base_64)
                 
@@ -97,6 +103,33 @@ class ImageQuery(Query):
             )
             all_images.append(_image)
 
+        return all_images
+    
+
+    def get_range_of_images(self, range_start, range_end):
+        self.connect_db()
+        cursor = self.db_con.cursor()
+        query = f"""
+            SELECT * FROM {self.table}
+            WHERE id >= %s AND id <= %s
+        """
+        cursor.execute(query, [range_start, range_end])
+        res = cursor.fetchall()
+
+        self.disconnect_db()
+
+        all_images = []
+        for image in res:
+            _image = ImageOut(
+                id=image[0],
+                filename=image[1],
+                title=image[2],
+                mediums=image[3],
+                tags=image[4],
+                created=image[5]
+            )
+            all_images.append(_image)
+        
         return all_images
 
 

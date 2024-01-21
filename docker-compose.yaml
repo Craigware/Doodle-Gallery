@@ -42,12 +42,14 @@ services:
   
   frontend:
     image: nginx:latest
+    build:
+      context: ./frontend/
+      dockerfile: dockerfile
     networks:
       - doodle-gallery
     ports:
       - "8080:8080"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./frontend:/usr/share/nginx/frontend
     depends_on:
       - backend

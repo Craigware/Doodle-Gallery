@@ -1,11 +1,12 @@
 import os
 
 from typing import Annotated
+from PIL import Image as IMG
 
 from fastapi import (APIRouter, Depends, Header)
 from fastapi.responses import FileResponse
 
-from queries.images import ImageQuery
+from queries.images import ImageQuery, OrderStyle
 from models.images import *
 
 router = APIRouter(tags=["IMAGES"])
@@ -14,26 +15,43 @@ router = APIRouter(tags=["IMAGES"])
 async def get_image_file(
     image_id: int,
     file: str | None = None,
+    compressed: bool | None = None,
     repo: ImageQuery = Depends()
 ):
     image = repo.get_one_image(image_id)
     if file:
         image_file = repo.get_image_file(image)
+
+        if compressed:
+            compressed_image = IMG.open(image_file)
+            compressed_image.save(
+                image_file,
+                "JPEG",
+                optimize=True,
+                quality = 60
+            )
+            return FileResponse(image_file)
         return FileResponse(image_file)
     return image
 
 
-@router.get("/api/images/")
+@router.get("/api/images")
 async def get_all_images(
         title: str | None =  None,
         mediums: str | None = None,
         tags: str | None = None,
         created: str | None = None,
-        sort_style: str | None = "default",
+        sort_style: OrderStyle | None = OrderStyle.DEFAULT,
+        range_start: int | None = None,
+        range_end: int | None = None,
         repo: ImageQuery = Depends()
     ):
 
-    if (title or mediums or tags or created):
+    if range_start or range_end:
+        images = repo.get_range_of_images(range_start, range_end)
+        return repo.order_image_list(images, sort_style)
+    
+    if title or mediums or tags or created:
         if title == None: title = ""
         if created == None: created = ""
         if mediums == None: mediums = ""
@@ -48,7 +66,7 @@ async def get_all_images(
         images = repo.get_some_images(search)
         return repo.order_image_list(images, sort_style)
     
-    images = repo.get_all_images()      
+    images = repo.get_all_images()
 
     if (sort_style):
         return repo.order_image_list(images, sort_style)
