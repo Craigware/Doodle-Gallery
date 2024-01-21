@@ -3,6 +3,7 @@
 .key
 backend/SSL
 frontend/SSL
+backend/images
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,0 +1,9 @@
+FROM nginx:latest
+
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY . /usr/share/nginx/frontend
+
+COPY ./SSL/SSL.key /SSL/Key.key
+COPY ./SSL/SSL.pem /SSL/Pem.pem
+
+EXPOSE 80
