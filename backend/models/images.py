@@ -7,6 +7,8 @@ class Image(BaseModel):
     mediums: str
     tags: str
     created: date
+    description: str
+    orientation: str
 
 class ImageIn(Image):
     base_64: str

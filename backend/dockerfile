@@ -4,8 +4,8 @@ FROM python:3.10-bullseye
 WORKDIR /app
 
 COPY ./requirements.txt ./requirements.txt
-COPY ./SSL/api.key ./SSL.key
-COPY ./SSL/api.pem ./SSL.pem
+COPY ./SSL/SSL.key ./SSL.key
+COPY ./SSL/SSL.pem ./SSL.pem
 
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
@@ -13,5 +13,5 @@ COPY . /app/
 
 EXPOSE 8000
 
-CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:8000", "--reload"]
-# CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:8000", "--certfile", "SSL.pem", "--keyfile", "SSL.key"]
+# CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:8000", "--reload"]
+CMD ["hypercorn", "main:app", "--bind", "0.0.0.0:8000", "--certfile", "SSL.pem", "--keyfile", "SSL.key"]

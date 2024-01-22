@@ -24,7 +24,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: dockerfile.dev
+      dockerfile: dockerfile
     networks:
       - doodle-gallery
     ports:
@@ -48,8 +48,6 @@ services:
     networks:
       - doodle-gallery
     ports:
-      - "8080:8080"
-    volumes:
-      - ./frontend:/usr/share/nginx/frontend
+      - "443:443"
     depends_on:
       - backend

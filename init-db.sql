@@ -8,5 +8,7 @@ CREATE TABLE IF NOT EXISTS images (
     title VARCHAR(30) NOT NULL,
     tags TINYTEXT NOT NULL,
     mediums TINYTEXT NOT NULL,
-    created DATE NULL
+    created DATE NULL,
+    descript MEDIUMTEXT NULL,
+    orientation VARCHAR(10)
 );

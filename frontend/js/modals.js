@@ -185,6 +185,7 @@ export default class Modals{
             <input type="text" placeholder="Mediums" name="mediums"/>
             <input type="date"name="created"/>
             <input type="file" accept=".jpg, .jpeg" placeholder="Image" name="filename"/>
+            <textarea name="description" placeholder="Image description..."></textarea>
             <button>Upload</button>
         `
 
