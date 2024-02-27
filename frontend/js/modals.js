@@ -1,4 +1,6 @@
 import { submitUploadForm, handleFormData } from "./uploadForm.js";
+const backend_url = "/backend";
+let pwd = null;
 
 export default class Modals{
     static removeExistingModals(){ // returns boolean on if something was deleted

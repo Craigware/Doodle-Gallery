@@ -47,15 +47,13 @@ async def get_all_images(
         repo: ImageQuery = Depends()
     ):
 
-    if range_start or range_end:
-        images = repo.get_range_of_images(range_start, range_end)
-        return repo.order_image_list(images, sort_style)
-    
-    if title or mediums or tags or created:
+    if title or mediums or tags or created or range_start or range_end:
         if title == None: title = ""
         if created == None: created = ""
         if mediums == None: mediums = ""
         if tags == None: tags = ""
+        if range_start == None: range_start = 0
+        if range_end == None: range_end = 30
         
         search = {
             "title": title,
@@ -63,7 +61,8 @@ async def get_all_images(
             "tags": tags,
             "created": created
         }
-        images = repo.get_some_images(search)
+
+        images = repo.get_some_images(range_start, range_end, search)
         return repo.order_image_list(images, sort_style)
     
     images = repo.get_all_images()

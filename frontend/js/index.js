@@ -22,7 +22,7 @@ const searchQuery = {
     mediums: "",
     created: "",
     tags: "",
-    sort_style: ""
+    sort_style: "default"
 };
 
 let images = []
@@ -43,7 +43,7 @@ window.addEventListener("load", () => {
         adminOption.onclick = Modals.showAdminLoginModal;
     }
 
-    Gallery.fetchImages().then((_images) => {
+    Gallery.fetchImages(3).then((_images) => {
         Gallery.createGallery(_images);
         images = _images;
     })
@@ -51,7 +51,7 @@ window.addEventListener("load", () => {
     searchForm.addEventListener("change", (e) => {
         searchQuery[e.target.name] = e.target.value;
 
-        searchFor(searchQuery).then((_images) => {
+        images = searchFor(searchQuery).then((_images) => {
             images = _images;
             Gallery.deleteGallery();
             Gallery.createGallery(images);
@@ -64,14 +64,23 @@ window.addEventListener("load", () => {
 });
 
 let acceptingResize = true;
+let windowWidth = window.innerWidth;
 async function resizeWindow(e){
-    if (acceptingResize) {
+    if (acceptingResize && windowWidth != window.innerWidth) {
         acceptingResize = false;
 
         Gallery.deleteGallery();
         await Gallery.createGallery(images)
+        windowWidth = window.innerWidth;
         acceptingResize = true;
     }
 }
 
 window.addEventListener("resize", resizeWindow);
+
+const loadMore = document.getElementById("LoadMore"); 
+loadMore.addEventListener("click", async (e) => { 
+  console.log(images);
+  let newImages = await Gallery.loadMore(searchQuery, images.length+1,30);
+  images = images.concat(newImages);
+});

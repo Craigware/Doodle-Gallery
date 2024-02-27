@@ -15,6 +15,14 @@ input[type=text], input[type=date], input[type=file], button{
     padding: 4px;
 }
 
+#LoadMore { 
+  cursor: pointer;
+  margin: 16px auto;
+  display: block;
+  border-radius: 30px;
+  padding: 16px 24px;
+}
+
 textarea {
     height: 4rem;
     padding: 4px;
@@ -71,7 +79,6 @@ footer a{
 
 
 #Gallery {
-    height: 100vh;
     min-height: 100vh;
     margin: 0 0;
 }
@@ -121,6 +128,7 @@ a {
     padding: 1rem 1rem;
     font-weight: 600;
     font-size: 18px;
+    border-radius: 10px;
 }
 
 #SearchForm {
@@ -135,6 +143,7 @@ select {
     font-weight: bold;
     font-size: 16px;
     color: gray;
+    border-radius: 10px;
 }
 
 option {

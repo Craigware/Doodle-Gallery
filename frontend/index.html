@@ -14,14 +14,13 @@
         <form id="SearchForm">
             <input type="Text" name="title" placeholder="Search; Watercolor, Ink, Acrylic, Etc..."/>
             <Select name="sort_style">
-                <option value="default">Order By</option>
+                <option selected="selected" value="default">Order By</option>
                 <option value="date_created">Date Created</option>
-                <option value="medium">Medium</option>
             </Select>
         </form>
-        <div id="Gallery" class="gallery" style="height: 1080px"></div>
-
-        <img src="" class=".gallery-item" />
+        <div id="Gallery" class="gallery"></div>
+        
+        <button id="LoadMore">Load More</button>
     </main>
 </body>
 <footer id="Sticky-Footer">

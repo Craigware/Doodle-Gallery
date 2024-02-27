@@ -108,14 +108,16 @@ class ImageQuery(Query):
         return all_images
     
 
-    def get_range_of_images(self, range_start, range_end):
+    def get_range_of_images(self, range_start: int, range_end: int, queries = None):
         self.connect_db()
         cursor = self.db_con.cursor()
         query = f"""
             SELECT * FROM {self.table}
             WHERE id >= %s AND id <= %s
         """
-        cursor.execute(query, [range_start, range_end])
+        values = [range_start, range_end]
+
+        cursor.execute(query, values)
         res = cursor.fetchall()
 
         self.disconnect_db()
@@ -137,13 +139,13 @@ class ImageQuery(Query):
         return all_images
 
 
-    def get_some_images(self, queries: dict) -> list:
+    def get_some_images(self, start: int, end: int, queries: dict) -> list:
         self.connect_db()
         cursor = self.db_con.cursor()
 
         query = f"""
             SELECT * FROM {self.table} 
-            WHERE id > -1
+            WHERE id >= {start} AND id <= {end}
         """
         # this is scuffed and probably needs a rework.
         values = []
@@ -176,8 +178,9 @@ class ImageQuery(Query):
                 case "created":
                     if value == "": break
                     query += " AND created LIKE %s"
-
+                    
             values.append(f'%{value}%')
+
 
         cursor.execute(query, values)
         res = cursor.fetchall()
