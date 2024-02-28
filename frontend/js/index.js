@@ -43,7 +43,7 @@ window.addEventListener("load", () => {
         adminOption.onclick = Modals.showAdminLoginModal;
     }
 
-    Gallery.fetchImages(3).then((_images) => {
+    Gallery.fetchImages(30).then((_images) => {
         Gallery.createGallery(_images);
         images = _images;
     })
