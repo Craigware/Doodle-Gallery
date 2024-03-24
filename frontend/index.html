@@ -11,13 +11,18 @@
     <main>
         <!-- Some reason i decided to do this with css background img instead of a normal img -->
         <div id="Hero" class="hero"></div>
-        <form id="SearchForm">
-            <input type="Text" name="title" placeholder="Search; Watercolor, Ink, Acrylic, Etc..."/>
-            <Select name="sort_style">
-                <option selected="selected" value="default">Order By</option>
-                <option value="date_created">Date Created</option>
+        <div>
+          <form id="SearchForm">
+              <input type="Text" name="title" placeholder="Search; Watercolor, Ink, Acrylic, Etc..." />
+          </form>
+          <form id="SortForm">
+            <Select name="sort_style" class="sort-option">
+              <option selected="selected" value="id">Order By</option>
+              <option value="id">Date Uploaded</option>
+              <option value="created">Date Created</option>
             </Select>
-        </form>
+          </form>
+        </div>
         <div id="Gallery" class="gallery"></div>
         
         <button id="LoadMore">Load More</button>

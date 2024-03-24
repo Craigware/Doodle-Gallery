@@ -1,6 +1,6 @@
 import Gallery from "./gallery.js";
 import Modals from "./modals.js";
-import searchFor from "./searchForm.js";
+import searchFor, { quickSortImages } from "./searchForm.js";
 
 function getCookies(){
     const cookieString = document.cookie;
@@ -22,7 +22,6 @@ const searchQuery = {
     mediums: "",
     created: "",
     tags: "",
-    sort_style: "default"
 };
 
 let images = []
@@ -31,6 +30,7 @@ let pwd = null;
 
 window.addEventListener("load", () => {
     const searchForm = document.getElementById("SearchForm");
+    const sortForm = document.getElementById("SortForm");
     const footer = document.getElementById("Sticky-Footer");
     const adminOption = footer.children[0];
 
@@ -46,6 +46,7 @@ window.addEventListener("load", () => {
     Gallery.fetchImages(30).then((_images) => {
         Gallery.createGallery(_images);
         images = _images;
+        console.log(images);
     })
 
     searchForm.addEventListener("change", (e) => {
@@ -56,6 +57,14 @@ window.addEventListener("load", () => {
             Gallery.deleteGallery();
             Gallery.createGallery(images);
         });
+    });
+
+    sortForm.addEventListener("change", (e) => {
+      let sortStyle = e.target.value;
+      quickSortImages(images, sortStyle);
+      images = images.reverse();
+      Gallery.deleteGallery();
+      Gallery.createGallery(images);
     });
 
     searchForm.addEventListener("submit", (e) => {
@@ -80,7 +89,7 @@ window.addEventListener("resize", resizeWindow);
 
 const loadMore = document.getElementById("LoadMore"); 
 loadMore.addEventListener("click", async (e) => { 
-  console.log(images);
-  let newImages = await Gallery.loadMore(searchQuery, images.length+1,30);
+  let newImages = await Gallery.loadMore(searchQuery, images.length+1, 5);
+  newImages = newImages.reverse();
   images = images.concat(newImages);
 });

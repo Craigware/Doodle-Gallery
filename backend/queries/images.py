@@ -181,7 +181,6 @@ class ImageQuery(Query):
                     
             values.append(f'%{value}%')
 
-
         cursor.execute(query, values)
         res = cursor.fetchall()
         self.disconnect_db()

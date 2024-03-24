@@ -63,14 +63,10 @@ async def get_all_images(
         }
 
         images = repo.get_some_images(range_start, range_end, search)
-        return repo.order_image_list(images, sort_style)
-    
-    images = repo.get_all_images()
-
-    if (sort_style):
-        return repo.order_image_list(images, sort_style)
-    else:
         return images
+        
+    images = repo.get_all_images()
+    return images
 
 
 @router.post("/api/images/")

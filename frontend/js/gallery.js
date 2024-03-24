@@ -1,4 +1,5 @@
 import Modals from "./modals.js";
+import { quickSortImages, SortStyles } from "./searchForm.js";
 
 const backend_url = "/backend";
 
@@ -65,19 +66,19 @@ export default class Gallery{
       let row = startingRow;
       if (row.parentElement != gallery) { gallery.appendChild(row); }
 
-      for (let i = 0; i < images.length; i++){
+      for (let j = 0; j < images.length; j++){
         if (r >= rowLengths[currLen]) {
             if (currLen == 0) { currLen = 1; } else { currLen = 0; }
             row = this.createGalleryRow(rowLengths[currLen]);
             gallery.appendChild(row);
             r = 0;
         }
-        
-        r = await this.addImageToGallery(row, images[i], r, rowLengths[currLen]);
+
+        r = await this.addImageToGallery(row, images[j], r, rowLengths[currLen]);
       }
     }
 
-    static addToGallery(images){
+    static async addToGallery(images){
       const gallery = document.getElementById("Gallery");
       let row = gallery.children[gallery.children.length - 1];
 
@@ -98,7 +99,7 @@ export default class Gallery{
         r = 0;
       }
 
-      this.appendRowsToGallery(row, images, currLen, rowLengths, r);
+      await this.appendRowsToGallery(row, images, currLen, rowLengths, r);
     }
 
     static deleteGallery(images){
@@ -107,8 +108,6 @@ export default class Gallery{
     }
 
     static async addImageToGallery(row, image, rowPosition, rowLength){
-      console.log(image);
-
       const iSrc = backend_url + "/images/" + `${image["id"]}?file=true&compressed=true`;
       const galleryItem = await this.getImageMeta(iSrc);
       galleryItem.alt = image["description"];
@@ -135,6 +134,7 @@ export default class Gallery{
     static async fetchImages(amount = 30){
         let images = await fetch(backend_url + `/images?range_start=0&range_end=${amount}`);
         let data = await images.json();
+        data = data.reverse();
         return data;
     }
 
@@ -147,12 +147,10 @@ export default class Gallery{
       }
 
       let url = backend_url + "/images?";
-      console.log(url + new URLSearchParams(newQuery));
 
       let images = await fetch(url + new URLSearchParams(newQuery));
       let data = await images.json();
-
-      this.addToGallery(data);
+      await this.addToGallery(data);
 
       return data;
     }

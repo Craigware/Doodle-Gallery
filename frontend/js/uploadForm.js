@@ -51,8 +51,6 @@ export async function handleFormData(e) {
     } else {
         data[e.target.name] = e.target.value;
     }
-
-    console.log(data);
 }
 
 const data = {};
