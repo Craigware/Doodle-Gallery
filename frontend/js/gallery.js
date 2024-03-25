@@ -150,6 +150,8 @@ export default class Gallery{
 
       let images = await fetch(url + new URLSearchParams(newQuery));
       let data = await images.json();
+      data = data.reverse();
+      
       await this.addToGallery(data);
 
       return data;

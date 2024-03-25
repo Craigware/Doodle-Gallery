@@ -9,13 +9,23 @@
 </head>
 <body>
     <main>
-        <!-- Some reason i decided to do this with css background img instead of a normal img -->
         <div id="Hero" class="hero"></div>
-        <div>
+        <div id="QueryForms">
           <form id="SearchForm">
               <input type="Text" name="title" placeholder="Search; Watercolor, Ink, Acrylic, Etc..." />
           </form>
           <form id="SortForm">
+            <Select name="select_medium" class="sort-option">
+              <option selected="selected" value="any">Any</option>
+              <option value="Acrylic">Acrylic</option>
+              <option value="Ink">Ink</option>
+              <option value="Watercolor">Watercolor</option>
+              <option value="Gouache">Gouache</option>
+              <option value="colored-pencil">Colored Pencil</option>
+              <option value="charcoal">Charcoal</option>
+              <option value="graphite">Graphite</option>
+            </Select>
+
             <Select name="sort_style" class="sort-option">
               <option selected="selected" value="id">Order By</option>
               <option value="id">Date Uploaded</option>
@@ -23,8 +33,8 @@
             </Select>
           </form>
         </div>
+
         <div id="Gallery" class="gallery"></div>
-        
         <button id="LoadMore">Load More</button>
     </main>
 </body>

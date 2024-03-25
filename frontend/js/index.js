@@ -90,6 +90,5 @@ window.addEventListener("resize", resizeWindow);
 const loadMore = document.getElementById("LoadMore"); 
 loadMore.addEventListener("click", async (e) => { 
   let newImages = await Gallery.loadMore(searchQuery, images.length+1, 5);
-  newImages = newImages.reverse();
   images = images.concat(newImages);
 });
